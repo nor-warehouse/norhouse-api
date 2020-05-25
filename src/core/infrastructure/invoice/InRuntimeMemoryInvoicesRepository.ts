@@ -1,6 +1,6 @@
-import { Invoice } from '../domain/invoice/Invoice';
-import { InvoiceNumber } from '../domain/invoice/InvoiceNumber';
-import { InvoicesRepository } from '../domain/invoice/InvoicesRepository';
+import { Invoice } from '../../domain/invoice/Invoice';
+import { InvoiceNumber } from '../../domain/invoice/InvoiceNumber';
+import { InvoicesRepository } from '../../domain/invoice/InvoicesRepository';
 
 export class InRuntimeMemoryInvoicesRepository implements InvoicesRepository {
   private invoices: Invoice[] = [];
