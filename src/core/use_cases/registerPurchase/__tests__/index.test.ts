@@ -3,6 +3,7 @@ import { UniqueEntityID } from '../../../../shared/core/UniqueEntityID';
 import { InvoiceNumber } from '../../../domain/invoice/InvoiceNumber';
 import { InvoicesRepository } from '../../../domain/invoice/InvoicesRepository';
 import { PurchaseInvoice } from '../../../domain/purchase/invoice/PurchaseInvoice';
+import { PurchaseProduct } from '../../../domain/purchase/product/PurchaseProduct';
 import { Supplier } from '../../../domain/supplier/Supplier';
 import { SupplierCuit } from '../../../domain/supplier/SupplierCuit';
 import { SupplierMail } from '../../../domain/supplier/SupplierMail';
@@ -89,12 +90,30 @@ test('Given a valid RegisterPurchaseRequestDTO with a new supplier, when purchas
   expect(supplier.phone.value).toEqual(request.supplier.new.phone);
 });
 
+test('Given a valid RegisterPurchaseRequestDTO, when purchase is registered, then should have them as props', async () => {
+  givenARegisterPurchaseRequest();
+  await whenPurchaseIsRegistered();
+  expect(purchase).toHaveProperty('products');
+  expect(purchase.products).toHaveLength(2);
+  purchase.products.forEach((product, i) => {
+    const rawProduct = request.products[i];
+    expect(product).toBeInstanceOf(PurchaseProduct);
+    expect(product.productId.id.toValue()).toEqual(rawProduct.id);
+    expect(product.price.value).toEqual(rawProduct.price);
+    expect(product.quantity.value).toEqual(rawProduct.quantity);
+    expect(product.totalPrice).toEqual(rawProduct.price * rawProduct.quantity);
+  });
+});
+
 const basePurchaseRequestDTO: RegisterPurchaseRequestDTO = {
   invoice: {
     date: new Date(1956, 9, 10),
     number: '4523',
   },
-  products: [{ id: '2', price: 200, quantity: 2 }],
+  products: [
+    { id: '1', price: 124, quantity: 2 },
+    { id: '2', price: 52, quantity: 1 },
+  ],
   supplier: {
     id: '25',
   },

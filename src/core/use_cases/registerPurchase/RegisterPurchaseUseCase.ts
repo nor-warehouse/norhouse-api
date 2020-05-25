@@ -4,7 +4,10 @@ import { Invoice } from '../../domain/invoice/Invoice';
 import { InvoiceDate } from '../../domain/invoice/InvoiceDate';
 import { InvoiceNumber } from '../../domain/invoice/InvoiceNumber';
 import { InvoicesRepository } from '../../domain/invoice/InvoicesRepository';
+import { ProductPrice } from '../../domain/product/ProductPrice';
 import { PurchaseInvoice } from '../../domain/purchase/invoice/PurchaseInvoice';
+import { PurchaseProduct } from '../../domain/purchase/product/PurchaseProduct';
+import { PurchaseProductQuantity } from '../../domain/purchase/product/PurchaseProductQuantity';
 import { Supplier } from '../../domain/supplier/Supplier';
 import { SupplierCuit } from '../../domain/supplier/SupplierCuit';
 import { SupplierId } from '../../domain/supplier/SupplierId';
@@ -49,9 +52,21 @@ export class RegisterPurchaseUseCase implements UseCase<RegisterPurchaseRequestD
       supplierId = supplier.supplierId;
     }
 
+    // Setup Products
+    const products = request.products.map(raw => {
+      return PurchaseProduct.create(
+        {
+          price: ProductPrice.create({ value: raw.price }),
+          quantity: PurchaseProductQuantity.create({ value: raw.quantity }),
+        },
+        new UniqueEntityID(raw.id),
+      );
+    });
+
     return {
       invoice: purchaseInvoice,
       supplierId,
+      products,
     };
   }
 }
