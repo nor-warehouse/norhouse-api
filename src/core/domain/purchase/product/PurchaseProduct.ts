@@ -1,10 +1,12 @@
 import { Entity } from '../../../../shared/core/Entity';
 import { UniqueEntityID } from '../../../../shared/core/UniqueEntityID';
-import { ProductId } from '../../product/ProductId';
-import { ProductPrice } from '../../product/ProductPrice';
+import { Category } from '../../product/category/Category';
+import { ProductId } from '../../product/product/ProductId';
+import { ProductPrice } from '../../product/product/ProductPrice';
 import { PurchaseProductQuantity } from './PurchaseProductQuantity';
 
 interface PurchaseProductProps {
+  category: Category;
   price: ProductPrice;
   quantity: PurchaseProductQuantity;
 }
@@ -20,6 +22,10 @@ export class PurchaseProduct extends Entity<PurchaseProductProps> {
 
   get productId(): ProductId {
     return ProductId.create(this._id);
+  }
+
+  get category(): Category {
+    return this.props.category;
   }
 
   get price(): ProductPrice {

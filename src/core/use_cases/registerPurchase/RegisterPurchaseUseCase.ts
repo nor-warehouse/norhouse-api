@@ -4,7 +4,9 @@ import { Invoice } from '../../domain/invoice/Invoice';
 import { InvoiceDate } from '../../domain/invoice/InvoiceDate';
 import { InvoiceNumber } from '../../domain/invoice/InvoiceNumber';
 import { InvoicesRepository } from '../../domain/invoice/InvoicesRepository';
-import { ProductPrice } from '../../domain/product/ProductPrice';
+import { CategoriesRepository } from '../../domain/product/category/CategoriesRepository';
+import { ProductPrice } from '../../domain/product/product/ProductPrice';
+import { ProductsRepository } from '../../domain/product/product/ProductsRepository';
 import { PurchaseInvoice } from '../../domain/purchase/invoice/PurchaseInvoice';
 import { PurchaseProduct } from '../../domain/purchase/product/PurchaseProduct';
 import { PurchaseProductQuantity } from '../../domain/purchase/product/PurchaseProductQuantity';
@@ -16,9 +18,16 @@ import { SupplierName } from '../../domain/supplier/SupplierName';
 import { SupplierPhone } from '../../domain/supplier/SupplierPhone';
 import { SuppliersRepository } from '../../domain/supplier/SuppliersRepository';
 import { RegisterPurchaseRequestDTO } from './RegisterPurchaseRequestDTO';
+import { Category } from '../../domain/product/category/Category';
+import { CategoryId } from '../../domain/product/category/CategoryId';
 
 export class RegisterPurchaseUseCase implements UseCase<RegisterPurchaseRequestDTO> {
-  constructor(private invoicesRepo: InvoicesRepository, private suppliersRepo: SuppliersRepository) {}
+  constructor(
+    private invoicesRepo: InvoicesRepository,
+    private suppliersRepo: SuppliersRepository,
+    private categoriesRepo: CategoriesRepository,
+    private productsRepo: ProductsRepository,
+  ) {}
 
   async execute(request: RegisterPurchaseRequestDTO): Promise<any> {
     // Setup Invoice
@@ -53,15 +62,22 @@ export class RegisterPurchaseUseCase implements UseCase<RegisterPurchaseRequestD
     }
 
     // Setup Products
-    const products = request.products.map(raw => {
-      return PurchaseProduct.create(
-        {
-          price: ProductPrice.create({ value: raw.price }),
-          quantity: PurchaseProductQuantity.create({ value: raw.quantity }),
-        },
-        new UniqueEntityID(raw.id),
-      );
-    });
+    const products = await Promise.all(
+      request.products.map(async raw => {
+        if (raw.category.id) {
+          const categoryId = CategoryId.create(new UniqueEntityID(raw.category.id));
+          const category = await this.categoriesRepo.findById(categoryId);
+          return PurchaseProduct.create(
+            {
+              category,
+              price: ProductPrice.create({ value: raw.price }),
+              quantity: PurchaseProductQuantity.create({ value: raw.quantity }),
+            },
+            new UniqueEntityID(raw.product.id),
+          );
+        }
+      }),
+    );
 
     return {
       invoice: purchaseInvoice,

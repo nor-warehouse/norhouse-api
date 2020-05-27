@@ -2,6 +2,10 @@
 import { UniqueEntityID } from '../../../../shared/core/UniqueEntityID';
 import { InvoiceNumber } from '../../../domain/invoice/InvoiceNumber';
 import { InvoicesRepository } from '../../../domain/invoice/InvoicesRepository';
+import { CategoriesRepository } from '../../../domain/product/category/CategoriesRepository';
+import { Category } from '../../../domain/product/category/Category';
+import { CategoryName } from '../../../domain/product/category/CategoryName';
+import { ProductsRepository } from '../../../domain/product/product/ProductsRepository';
 import { PurchaseInvoice } from '../../../domain/purchase/invoice/PurchaseInvoice';
 import { PurchaseProduct } from '../../../domain/purchase/product/PurchaseProduct';
 import { Supplier } from '../../../domain/supplier/Supplier';
@@ -11,15 +15,21 @@ import { SupplierName } from '../../../domain/supplier/SupplierName';
 import { SupplierPhone } from '../../../domain/supplier/SupplierPhone';
 import { SuppliersRepository } from '../../../domain/supplier/SuppliersRepository';
 import { InRuntimeMemoryInvoicesRepository } from '../../../infrastructure/invoice/InRuntimeMemoryInvoicesRepository';
+import { InMemoryCategoriesRepository } from '../../../infrastructure/product/InMemoryCategoriesRepository';
+import { InMemoryProductsRepository } from '../../../infrastructure/product/InMemoryProductsRepository';
 import { InRuntimeMemorySuppliersRepository } from '../../../infrastructure/supplier/InRuntimeMemorySuppliersRepository';
 import { RegisterPurchaseRequestDTO } from '../RegisterPurchaseRequestDTO';
 import { RegisterPurchaseUseCase } from '../RegisterPurchaseUseCase';
 
 let request: RegisterPurchaseRequestDTO;
 let purchase: any;
+
 const invoicesRepo: InvoicesRepository = new InRuntimeMemoryInvoicesRepository();
 let suppliersRepo: SuppliersRepository = new InRuntimeMemorySuppliersRepository();
-let registerPurchase = new RegisterPurchaseUseCase(invoicesRepo, suppliersRepo);
+let categoriesRepo: CategoriesRepository = new InMemoryCategoriesRepository();
+const productsRepo: ProductsRepository = new InMemoryProductsRepository();
+
+let registerPurchase = new RegisterPurchaseUseCase(invoicesRepo, suppliersRepo, categoriesRepo, productsRepo);
 
 beforeEach(() => cleanUp());
 
@@ -91,18 +101,52 @@ test('Given a valid RegisterPurchaseRequestDTO with a new supplier, when purchas
 });
 
 test('Given a valid RegisterPurchaseRequestDTO, when purchase is registered, then should have them as props', async () => {
+  categoriesRepo.findById = jest.fn(categoryId =>
+    Promise.resolve(
+      Category.create(
+        {
+          name: CategoryName.create({ value: 'alcohol en gel' }),
+        },
+        new UniqueEntityID(categoryId.id.toValue()),
+      ),
+    ),
+  );
+
   givenARegisterPurchaseRequest();
   await whenPurchaseIsRegistered();
+
   expect(purchase).toHaveProperty('products');
   expect(purchase.products).toHaveLength(2);
+
   purchase.products.forEach((product, i) => {
     const rawProduct = request.products[i];
     expect(product).toBeInstanceOf(PurchaseProduct);
-    expect(product.productId.id.toValue()).toEqual(rawProduct.id);
+    expect(product.productId.id.toValue()).toEqual(rawProduct.product.id);
+    expect(product.category.categoryId.id.toValue()).toEqual(rawProduct.category.id);
     expect(product.price.value).toEqual(rawProduct.price);
     expect(product.quantity.value).toEqual(rawProduct.quantity);
     expect(product.totalPrice).toEqual(rawProduct.price * rawProduct.quantity);
   });
+});
+
+test.skip('Given a valid RegisterPurchaseRequestDTO with existing categories, when purchase is registered, then Purchase should have its ids', async () => {
+  const categoryId = request.products[0].category.id;
+
+  categoriesRepo.findById = jest.fn(() =>
+    Promise.resolve(
+      Category.create(
+        {
+          name: CategoryName.create({ value: 'alcohol en gel' }),
+        },
+        new UniqueEntityID(categoryId),
+      ),
+    ),
+  );
+
+  givenARegisterPurchaseRequest();
+  await whenPurchaseIsRegistered();
+  expect(purchase.products[0]).toHaveProperty('categoryId');
+  expect(purchase.products[0].categoryId.id.toValue()).toEqual(categoryId);
 });
 
 const basePurchaseRequestDTO: RegisterPurchaseRequestDTO = {
@@ -111,8 +155,8 @@ const basePurchaseRequestDTO: RegisterPurchaseRequestDTO = {
     number: '4523',
   },
   products: [
-    { id: '1', price: 124, quantity: 2 },
-    { id: '2', price: 52, quantity: 1 },
+    { category: { id: '1' }, product: { id: '1' }, price: 124, quantity: 2 },
+    { category: { id: '2' }, product: { id: '2' }, price: 52, quantity: 1 },
   ],
   supplier: {
     id: '25',
@@ -145,5 +189,6 @@ function cleanUp(): void {
   request = undefined;
   purchase = undefined;
   suppliersRepo = new InRuntimeMemorySuppliersRepository();
-  registerPurchase = new RegisterPurchaseUseCase(invoicesRepo, suppliersRepo);
+  categoriesRepo = new InMemoryCategoriesRepository();
+  registerPurchase = new RegisterPurchaseUseCase(invoicesRepo, suppliersRepo, categoriesRepo, productsRepo);
 }
