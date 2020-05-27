@@ -41,4 +41,9 @@ export class Product extends Entity<ProductProps> {
   get stock(): ProductStock {
     return this.props.stock;
   }
+
+  public addStock(value: number): void {
+    const updatedStock = this.stock.add(value);
+    this.props.stock = updatedStock;
+  }
 }

@@ -162,13 +162,32 @@ test('Given a valid RegisterPurchaseRequestDTO with new product and new category
   });
 });
 
+test('Given a valid RegisterPurchaseRequestDTO with existing products, when purchase is registeres, then Products stock should be updated', async () => {
+  const product = Product.create({
+    category: createCategory('2'),
+    name: ProductName.create({ value: 'nombre' }),
+    price: ProductPrice.create({ value: 199 }),
+    stock: ProductStock.create({ value: 50 }),
+  });
+  await productsRepo.save(product);
+
+  const request: RegisterPurchaseRequestDTO = {
+    ...basePurchaseRequestDTO,
+    products: [{ id: product.productId.id.toString(), price: 199, quantity: 50 }],
+  };
+  await registerPurchase.execute(request);
+
+  const storedProduct = await productsRepo.findById(product.productId);
+  expect(storedProduct.stock.value).toEqual(100);
+});
+
 const basePurchaseRequestDTO: RegisterPurchaseRequestDTO = {
   invoice: {
     date: new Date(1956, 9, 10),
     number: '4523',
   },
   products: [
-    { id: '1', price: 120, quantity: 12 },
+    { id: '1', price: 120, quantity: 10 },
     { id: '2', price: 120, quantity: 12 },
   ],
   supplier: {

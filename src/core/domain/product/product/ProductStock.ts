@@ -16,4 +16,8 @@ export class ProductStock extends ValueObject<ProductStockProps> {
   get value(): number {
     return this.props.value;
   }
+
+  public add(value: number): ProductStock {
+    return ProductStock.create({ value: this.value + value });
+  }
 }

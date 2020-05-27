@@ -90,6 +90,8 @@ export class RegisterPurchaseUseCase implements UseCase<RegisterPurchaseRequestD
     if (request.id) {
       const productId = ProductId.create(new UniqueEntityID(request.id));
       product = await this.productsRepo.findById(productId);
+      product.addStock(request.quantity);
+      await this.productsRepo.save(product);
     } else if (request.new) {
       let category: Category;
 
