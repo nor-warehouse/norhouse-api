@@ -5,7 +5,9 @@ import { InvoiceDate } from '../../domain/invoice/InvoiceDate';
 import { InvoiceNumber } from '../../domain/invoice/InvoiceNumber';
 import { InvoicesRepository } from '../../domain/invoice/InvoicesRepository';
 import { CategoriesRepository } from '../../domain/product/category/CategoriesRepository';
+import { Category } from '../../domain/product/category/Category';
 import { CategoryId } from '../../domain/product/category/CategoryId';
+import { CategoryName } from '../../domain/product/category/CategoryName';
 import { Product } from '../../domain/product/product/Product';
 import { ProductId } from '../../domain/product/product/ProductId';
 import { ProductName } from '../../domain/product/product/ProductName';
@@ -73,21 +75,24 @@ export class RegisterPurchaseUseCase implements UseCase<RegisterPurchaseRequestD
           const productId = ProductId.create(new UniqueEntityID(raw.id));
           product = await this.productsRepo.findById(productId);
         } else if (raw.new) {
+          let category: Category;
+
           if (raw.new.category.id) {
             const categoryId = CategoryId.create(new UniqueEntityID(raw.new.category.id));
-            const category = await this.categoriesRepo.findById(categoryId);
-            product = Product.create({
-              category,
-              name: ProductName.create({ value: raw.new.name }),
-              price: ProductPrice.create({ value: raw.price }),
-              stock: ProductStock.create({ value: raw.quantity }),
-            });
-            await this.productsRepo.save(product);
+            category = await this.categoriesRepo.findById(categoryId);
+          } else if (raw.new.category.new) {
+            category = Category.create({ name: CategoryName.create({ value: raw.new.category.new }) });
+            await this.categoriesRepo.save(category);
           }
-          // else if (raw.new.category.new) {
-          //   category = Category.create({ name: CategoryName.create({ value: raw.new.category.new }) });
-          //   await this.categoriesRepo.save(category);
-          // }
+
+          product = Product.create({
+            category,
+            name: ProductName.create({ value: raw.new.name }),
+            price: ProductPrice.create({ value: raw.price }),
+            stock: ProductStock.create({ value: raw.quantity }),
+          });
+
+          await this.productsRepo.save(product);
         }
 
         return PurchaseProduct.create(
