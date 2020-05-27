@@ -104,7 +104,7 @@ test('Given a valid RegisterPurchaseRequestDTO with a new supplier, when purchas
   expect(supplier.phone.value).toEqual(request.supplier.new.phone);
 });
 
-test('Given a valid RegisterPurchaseRequestDTO with existing products, when purchase is registered, then should have them as props', async () => {
+test('Given a valid RegisterPurchaseRequestDTO with existing products, when purchase is registered, then Purchase should have PurchaseProducts', async () => {
   givenARegisterPurchaseRequest();
   await whenPurchaseIsRegisteredWithProducts();
   expect(purchase).toHaveProperty('products');
@@ -139,6 +139,26 @@ test('Given a valid RegisterPurchaseRequestDTO with new product, when purchase i
     const storedProduct = await productsRepo.findById(product.productId);
     expect(storedProduct.productId.equals(product.productId)).toBe(true);
     expect(storedProduct.stock.value).toEqual(3);
+  });
+});
+
+test('Given a valid RegisterPurchaseRequestDTO with new product and new category, when purchase is registered, then a Product and Category should be created', async () => {
+  givenARegisterPurchaseRequestWithNewProductAndNewCategory();
+  await whenPurchaseIsRegistered();
+  expect(purchase).toHaveProperty('products');
+  expect(purchase.products).toHaveLength(1);
+
+  purchase.products.forEach(async product => {
+    expect(product.category).toHaveProperty('categoryId');
+    expect(product.category).not.toBeFalsy();
+    expect(product.category.categoryId).not.toBeFalsy();
+
+    const storedProduct = await productsRepo.findById(product.productId);
+    expect(storedProduct.productId.equals(product.productId)).toBe(true);
+    expect(storedProduct.stock.value).toEqual(product.quantity.value);
+
+    const storedCategory = await categoriesRepo.findById(product.category.categoryId);
+    expect(storedCategory.categoryId.equals(product.category.categoryId)).toBe(true);
   });
 });
 
@@ -185,6 +205,22 @@ function givenARegisterPurchaseRequestWithNewProduct(): void {
         },
         price: 12,
         quantity: 3,
+      },
+    ],
+  };
+}
+
+function givenARegisterPurchaseRequestWithNewProductAndNewCategory(): void {
+  request = {
+    ...basePurchaseRequestDTO,
+    products: [
+      {
+        new: {
+          name: 'jabon anti bacterial',
+          category: { new: 'jabones' },
+        },
+        price: 140,
+        quantity: 32,
       },
     ],
   };
