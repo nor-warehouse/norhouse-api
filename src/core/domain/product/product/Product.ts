@@ -39,6 +39,6 @@ export class Product extends Entity<ProductProps> {
   }
 
   get stock(): ProductStock {
-    return this.props.price;
+    return this.props.stock;
   }
 }
