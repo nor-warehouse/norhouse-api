@@ -20,6 +20,7 @@ import { SuppliersRepository } from '../../domain/supplier/SuppliersRepository';
 import { RegisterPurchaseRequestDTO } from './RegisterPurchaseRequestDTO';
 import { Category } from '../../domain/product/category/Category';
 import { CategoryId } from '../../domain/product/category/CategoryId';
+import { CategoryName } from '../../domain/product/category/CategoryName';
 
 export class RegisterPurchaseUseCase implements UseCase<RegisterPurchaseRequestDTO> {
   constructor(
@@ -64,18 +65,23 @@ export class RegisterPurchaseUseCase implements UseCase<RegisterPurchaseRequestD
     // Setup Products
     const products = await Promise.all(
       request.products.map(async raw => {
+        let category: Category;
         if (raw.category.id) {
           const categoryId = CategoryId.create(new UniqueEntityID(raw.category.id));
-          const category = await this.categoriesRepo.findById(categoryId);
-          return PurchaseProduct.create(
-            {
-              category,
-              price: ProductPrice.create({ value: raw.price }),
-              quantity: PurchaseProductQuantity.create({ value: raw.quantity }),
-            },
-            new UniqueEntityID(raw.product.id),
-          );
+          category = await this.categoriesRepo.findById(categoryId);
+        } else if (raw.category.new) {
+          category = Category.create({ name: CategoryName.create({ value: raw.category.new }) });
+          await this.categoriesRepo.save(category);
         }
+
+        return PurchaseProduct.create(
+          {
+            category,
+            price: ProductPrice.create({ value: raw.price }),
+            quantity: PurchaseProductQuantity.create({ value: raw.quantity }),
+          },
+          new UniqueEntityID(raw.product.id),
+        );
       }),
     );
 

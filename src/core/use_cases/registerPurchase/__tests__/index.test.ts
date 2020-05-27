@@ -56,7 +56,7 @@ test('Given a valid RegisterPurchaseRequestDTO, when purchase is registered, the
   const invoiceNumber = InvoiceNumber.create({ value: request.invoice.number });
   const invoice = await invoicesRepo.findByNumber(invoiceNumber);
 
-  expect(invoice).not.toBe(null);
+  expect(invoice).not.toBeFalsy();
   expect(invoice).toHaveProperty('type');
   expect(invoice.type).toEqual('purchase');
   expect(invoice).toHaveProperty('date');
@@ -90,7 +90,7 @@ test('Given a valid RegisterPurchaseRequestDTO with a new supplier, when purchas
   givenARegisterPurchaseRequestWithNewSupplier();
   await whenPurchaseIsRegistered();
   expect(purchase).toHaveProperty('supplierId');
-  expect(purchase.supplierId).not.toBe(undefined);
+  expect(purchase.supplierId).not.toBeFalsy();
 
   const supplier = await suppliersRepo.findById(purchase.supplierId);
   expect(supplier.supplierId).toEqual(purchase.supplierId);
@@ -129,24 +129,24 @@ test('Given a valid RegisterPurchaseRequestDTO, when purchase is registered, the
   });
 });
 
-test.skip('Given a valid RegisterPurchaseRequestDTO with existing categories, when purchase is registered, then Purchase should have its ids', async () => {
-  const categoryId = request.products[0].category.id;
-
-  categoriesRepo.findById = jest.fn(() =>
+test('Given a valid RegisterPurchaseRequestDTO with new categories, when purchase is registered, then should be created', async () => {
+  categoriesRepo.findById = jest.fn(categoryId =>
     Promise.resolve(
       Category.create(
         {
           name: CategoryName.create({ value: 'alcohol en gel' }),
         },
-        new UniqueEntityID(categoryId),
+        new UniqueEntityID(categoryId.id.toValue()),
       ),
     ),
   );
-
-  givenARegisterPurchaseRequest();
+  givenARegisterPurchaseRequestWithNewCategory();
   await whenPurchaseIsRegistered();
-  expect(purchase.products[0]).toHaveProperty('categoryId');
-  expect(purchase.products[0].categoryId.id.toValue()).toEqual(categoryId);
+  purchase.products.forEach(product => {
+    expect(product).toHaveProperty('category');
+    expect(product.category).not.toBeFalsy();
+    expect(product.category.categoryId).not.toBeFalsy();
+  });
 });
 
 const basePurchaseRequestDTO: RegisterPurchaseRequestDTO = {
@@ -178,6 +178,21 @@ function givenARegisterPurchaseRequestWithNewSupplier(): void {
         phone: '48567768',
       },
     },
+  };
+}
+
+function givenARegisterPurchaseRequestWithNewCategory(): void {
+  request = {
+    ...basePurchaseRequestDTO,
+    products: [
+      ...basePurchaseRequestDTO.products,
+      {
+        category: { new: 'jabon anti bacterial' },
+        product: { id: '3' },
+        price: 12,
+        quantity: 3,
+      },
+    ],
   };
 }
 
