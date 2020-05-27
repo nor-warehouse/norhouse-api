@@ -5,7 +5,11 @@ import { InvoicesRepository } from '../../../domain/invoice/InvoicesRepository';
 import { CategoriesRepository } from '../../../domain/product/category/CategoriesRepository';
 import { Category } from '../../../domain/product/category/Category';
 import { CategoryName } from '../../../domain/product/category/CategoryName';
+import { Product } from '../../../domain/product/product/Product';
+import { ProductName } from '../../../domain/product/product/ProductName';
+import { ProductPrice } from '../../../domain/product/product/ProductPrice';
 import { ProductsRepository } from '../../../domain/product/product/ProductsRepository';
+import { ProductStock } from '../../../domain/product/product/ProductStock';
 import { PurchaseInvoice } from '../../../domain/purchase/invoice/PurchaseInvoice';
 import { PurchaseProduct } from '../../../domain/purchase/product/PurchaseProduct';
 import { Supplier } from '../../../domain/supplier/Supplier';
@@ -27,7 +31,7 @@ let purchase: any;
 const invoicesRepo: InvoicesRepository = new InRuntimeMemoryInvoicesRepository();
 let suppliersRepo: SuppliersRepository = new InRuntimeMemorySuppliersRepository();
 let categoriesRepo: CategoriesRepository = new InMemoryCategoriesRepository();
-const productsRepo: ProductsRepository = new InMemoryProductsRepository();
+let productsRepo: ProductsRepository = new InMemoryProductsRepository();
 
 let registerPurchase = new RegisterPurchaseUseCase(invoicesRepo, suppliersRepo, categoriesRepo, productsRepo);
 
@@ -35,12 +39,12 @@ beforeEach(() => cleanUp());
 
 test('Given a valid RegisterPurchaseRequestDTO, when purchase is registered, then should not throw', () => {
   givenARegisterPurchaseRequest();
-  expect(whenPurchaseIsRegistered).not.toThrow();
+  expect(whenPurchaseIsRegisteredWithProducts).not.toThrow();
 });
 
 test('Given a valid RegisterPurchaseRequestDTO, when purchase is registered, then should have a PurchaseInvoice', async () => {
   givenARegisterPurchaseRequest();
-  await whenPurchaseIsRegistered();
+  await whenPurchaseIsRegisteredWithProducts();
   expect(purchase).toHaveProperty('invoice');
   expect(purchase.invoice).toBeInstanceOf(PurchaseInvoice);
   expect(purchase.invoice).toHaveProperty('date');
@@ -51,7 +55,7 @@ test('Given a valid RegisterPurchaseRequestDTO, when purchase is registered, the
 
 test('Given a valid RegisterPurchaseRequestDTO, when purchase is registered, then an Invoice should be saved', async () => {
   givenARegisterPurchaseRequest();
-  await whenPurchaseIsRegistered();
+  await whenPurchaseIsRegisteredWithProducts();
 
   const invoiceNumber = InvoiceNumber.create({ value: request.invoice.number });
   const invoice = await invoicesRepo.findByNumber(invoiceNumber);
@@ -81,71 +85,59 @@ test('Given a valid RegisterPurchaseRequestDTO with existing supplier, when purc
   );
 
   givenARegisterPurchaseRequest();
-  await whenPurchaseIsRegistered();
+  await whenPurchaseIsRegisteredWithProducts();
   expect(purchase).toHaveProperty('supplierId');
   expect(purchase.supplierId.id.toValue()).toEqual(request.supplier.id);
 });
 
 test('Given a valid RegisterPurchaseRequestDTO with a new supplier, when purchase is registered, then should save a new Supplier', async () => {
   givenARegisterPurchaseRequestWithNewSupplier();
-  await whenPurchaseIsRegistered();
+  await whenPurchaseIsRegisteredWithProducts();
   expect(purchase).toHaveProperty('supplierId');
   expect(purchase.supplierId).not.toBeFalsy();
 
   const supplier = await suppliersRepo.findById(purchase.supplierId);
-  expect(supplier.supplierId).toEqual(purchase.supplierId);
+  expect(supplier.supplierId.equals(purchase.supplierId)).toBe(true);
   expect(supplier.cuit.value).toEqual(request.supplier.new.cuit);
   expect(supplier.mail.value).toEqual(request.supplier.new.mail);
   expect(supplier.name.value).toEqual(request.supplier.new.name);
   expect(supplier.phone.value).toEqual(request.supplier.new.phone);
 });
 
-test('Given a valid RegisterPurchaseRequestDTO, when purchase is registered, then should have them as props', async () => {
-  categoriesRepo.findById = jest.fn(categoryId =>
-    Promise.resolve(
-      Category.create(
-        {
-          name: CategoryName.create({ value: 'alcohol en gel' }),
-        },
-        new UniqueEntityID(categoryId.id.toValue()),
-      ),
-    ),
-  );
-
+test('Given a valid RegisterPurchaseRequestDTO with existing products, when purchase is registered, then should have them as props', async () => {
   givenARegisterPurchaseRequest();
-  await whenPurchaseIsRegistered();
-
+  await whenPurchaseIsRegisteredWithProducts();
   expect(purchase).toHaveProperty('products');
   expect(purchase.products).toHaveLength(2);
 
   purchase.products.forEach((product, i) => {
     const rawProduct = request.products[i];
     expect(product).toBeInstanceOf(PurchaseProduct);
-    expect(product.productId.id.toValue()).toEqual(rawProduct.product.id);
-    expect(product.category.categoryId.id.toValue()).toEqual(rawProduct.category.id);
+    expect(product.productId.id.toValue()).toEqual(rawProduct.id);
+    expect(product.category.categoryId.id.toValue()).toEqual('8');
     expect(product.price.value).toEqual(rawProduct.price);
     expect(product.quantity.value).toEqual(rawProduct.quantity);
     expect(product.totalPrice).toEqual(rawProduct.price * rawProduct.quantity);
   });
 });
 
-test('Given a valid RegisterPurchaseRequestDTO with new categories, when purchase is registered, then should be created', async () => {
-  categoriesRepo.findById = jest.fn(categoryId =>
-    Promise.resolve(
-      Category.create(
-        {
-          name: CategoryName.create({ value: 'alcohol en gel' }),
-        },
-        new UniqueEntityID(categoryId.id.toValue()),
-      ),
-    ),
-  );
-  givenARegisterPurchaseRequestWithNewCategory();
-  await whenPurchaseIsRegistered();
-  purchase.products.forEach(product => {
-    expect(product).toHaveProperty('category');
-    expect(product.category).not.toBeFalsy();
-    expect(product.category.categoryId).not.toBeFalsy();
+test('Given a valid RegisterPurchaseRequestDTO with new product, when purchase is registered, then a Product should be created', async () => {
+  givenARegisterPurchaseRequestWithNewProduct();
+  await whenPurchaseIsRegistered(withCategories);
+  expect(purchase).toHaveProperty('products');
+  expect(purchase.products).toHaveLength(1);
+
+  purchase.products.forEach(async (product, i) => {
+    const storedProduct = await productsRepo.findById(product.productId);
+    expect(storedProduct.productId.equals(product.productId)).toBe(true);
+
+    const rawProduct = request.products[i];
+    expect(product).toBeInstanceOf(PurchaseProduct);
+    expect(product.productId).not.toBeFalsy();
+    expect(product.category.categoryId.id.toValue()).toEqual('8');
+    expect(product.price.value).toEqual(rawProduct.price);
+    expect(product.quantity.value).toEqual(rawProduct.quantity);
+    expect(product.totalPrice).toEqual(rawProduct.price * rawProduct.quantity);
   });
 });
 
@@ -155,8 +147,8 @@ const basePurchaseRequestDTO: RegisterPurchaseRequestDTO = {
     number: '4523',
   },
   products: [
-    { category: { id: '1' }, product: { id: '1' }, price: 124, quantity: 2 },
-    { category: { id: '2' }, product: { id: '2' }, price: 52, quantity: 1 },
+    { id: '1', price: 120, quantity: 12 },
+    { id: '2', price: 120, quantity: 12 },
   ],
   supplier: {
     id: '25',
@@ -181,14 +173,15 @@ function givenARegisterPurchaseRequestWithNewSupplier(): void {
   };
 }
 
-function givenARegisterPurchaseRequestWithNewCategory(): void {
+function givenARegisterPurchaseRequestWithNewProduct(): void {
   request = {
     ...basePurchaseRequestDTO,
     products: [
-      ...basePurchaseRequestDTO.products,
       {
-        category: { new: 'jabon anti bacterial' },
-        product: { id: '3' },
+        new: {
+          name: 'jabon anti bacterial',
+          category: { id: '8' },
+        },
         price: 12,
         quantity: 3,
       },
@@ -196,8 +189,13 @@ function givenARegisterPurchaseRequestWithNewCategory(): void {
   };
 }
 
-async function whenPurchaseIsRegistered(): Promise<void> {
+async function whenPurchaseIsRegistered(...fns: Function[]): Promise<void> {
+  fns.forEach(fn => fn());
   purchase = await registerPurchase.execute(request);
+}
+
+async function whenPurchaseIsRegisteredWithProducts(): Promise<void> {
+  await whenPurchaseIsRegistered(withProducts);
 }
 
 function cleanUp(): void {
@@ -205,5 +203,30 @@ function cleanUp(): void {
   purchase = undefined;
   suppliersRepo = new InRuntimeMemorySuppliersRepository();
   categoriesRepo = new InMemoryCategoriesRepository();
+  productsRepo = new InMemoryProductsRepository();
   registerPurchase = new RegisterPurchaseUseCase(invoicesRepo, suppliersRepo, categoriesRepo, productsRepo);
+}
+
+function createCategory(id): Category {
+  return Category.create({ name: CategoryName.create({ value: 'alcohol en gel' }) }, new UniqueEntityID(id));
+}
+
+function withProducts(): void {
+  productsRepo.findById = jest.fn(productId =>
+    Promise.resolve(
+      Product.create(
+        {
+          category: createCategory('8'),
+          name: ProductName.create({ value: 'jabon' }),
+          price: ProductPrice.create({ value: 120 }),
+          stock: ProductStock.create({ value: 12 }),
+        },
+        productId.id,
+      ),
+    ),
+  );
+}
+
+function withCategories(): void {
+  categoriesRepo.findById = jest.fn(categoryId => Promise.resolve(createCategory(categoryId.id.toValue())));
 }

@@ -4,13 +4,13 @@ export interface RegisterPurchaseRequestDTO {
     date: Date;
   };
   products: {
-    category: {
-      id?: string;
-      new?: string;
-    };
-    product: {
-      id?: string;
-      new?: string;
+    id?: string;
+    new?: {
+      name: string;
+      category: {
+        id?: string;
+        new?: string;
+      };
     };
     price: number;
     quantity: number;

@@ -5,8 +5,13 @@ import { InvoiceDate } from '../../domain/invoice/InvoiceDate';
 import { InvoiceNumber } from '../../domain/invoice/InvoiceNumber';
 import { InvoicesRepository } from '../../domain/invoice/InvoicesRepository';
 import { CategoriesRepository } from '../../domain/product/category/CategoriesRepository';
+import { CategoryId } from '../../domain/product/category/CategoryId';
+import { Product } from '../../domain/product/product/Product';
+import { ProductId } from '../../domain/product/product/ProductId';
+import { ProductName } from '../../domain/product/product/ProductName';
 import { ProductPrice } from '../../domain/product/product/ProductPrice';
 import { ProductsRepository } from '../../domain/product/product/ProductsRepository';
+import { ProductStock } from '../../domain/product/product/ProductStock';
 import { PurchaseInvoice } from '../../domain/purchase/invoice/PurchaseInvoice';
 import { PurchaseProduct } from '../../domain/purchase/product/PurchaseProduct';
 import { PurchaseProductQuantity } from '../../domain/purchase/product/PurchaseProductQuantity';
@@ -18,9 +23,6 @@ import { SupplierName } from '../../domain/supplier/SupplierName';
 import { SupplierPhone } from '../../domain/supplier/SupplierPhone';
 import { SuppliersRepository } from '../../domain/supplier/SuppliersRepository';
 import { RegisterPurchaseRequestDTO } from './RegisterPurchaseRequestDTO';
-import { Category } from '../../domain/product/category/Category';
-import { CategoryId } from '../../domain/product/category/CategoryId';
-import { CategoryName } from '../../domain/product/category/CategoryName';
 
 export class RegisterPurchaseUseCase implements UseCase<RegisterPurchaseRequestDTO> {
   constructor(
@@ -65,22 +67,36 @@ export class RegisterPurchaseUseCase implements UseCase<RegisterPurchaseRequestD
     // Setup Products
     const products = await Promise.all(
       request.products.map(async raw => {
-        let category: Category;
-        if (raw.category.id) {
-          const categoryId = CategoryId.create(new UniqueEntityID(raw.category.id));
-          category = await this.categoriesRepo.findById(categoryId);
-        } else if (raw.category.new) {
-          category = Category.create({ name: CategoryName.create({ value: raw.category.new }) });
-          await this.categoriesRepo.save(category);
+        let product: Product;
+
+        if (raw.id) {
+          const productId = ProductId.create(new UniqueEntityID(raw.id));
+          product = await this.productsRepo.findById(productId);
+        } else if (raw.new) {
+          if (raw.new.category.id) {
+            const categoryId = CategoryId.create(new UniqueEntityID(raw.new.category.id));
+            const category = await this.categoriesRepo.findById(categoryId);
+            product = Product.create({
+              category,
+              name: ProductName.create({ value: raw.new.name }),
+              price: ProductPrice.create({ value: raw.price }),
+              stock: ProductStock.create({ value: raw.quantity }),
+            });
+            await this.productsRepo.save(product);
+          }
+          // else if (raw.new.category.new) {
+          //   category = Category.create({ name: CategoryName.create({ value: raw.new.category.new }) });
+          //   await this.categoriesRepo.save(category);
+          // }
         }
 
         return PurchaseProduct.create(
           {
-            category,
-            price: ProductPrice.create({ value: raw.price }),
+            category: product.category,
+            price: product.price,
             quantity: PurchaseProductQuantity.create({ value: raw.quantity }),
           },
-          new UniqueEntityID(raw.product.id),
+          product.productId.id,
         );
       }),
     );
