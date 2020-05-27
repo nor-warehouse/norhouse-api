@@ -24,7 +24,12 @@ import { SupplierMail } from '../../domain/supplier/SupplierMail';
 import { SupplierName } from '../../domain/supplier/SupplierName';
 import { SupplierPhone } from '../../domain/supplier/SupplierPhone';
 import { SuppliersRepository } from '../../domain/supplier/SuppliersRepository';
-import { RegisterPurchaseRequestDTO } from './RegisterPurchaseRequestDTO';
+import {
+  RegisterPurchaseRequestDTO,
+  RegisterPurchaseRequestDTOInvoice,
+  RegisterPurchaseRequestDTOProduct,
+  RegisterPurchaseRequestDTOSupplier,
+} from './RegisterPurchaseRequestDTO';
 
 export class RegisterPurchaseUseCase implements UseCase<RegisterPurchaseRequestDTO> {
   constructor(
@@ -35,8 +40,21 @@ export class RegisterPurchaseUseCase implements UseCase<RegisterPurchaseRequestD
   ) {}
 
   async execute(request: RegisterPurchaseRequestDTO): Promise<any> {
-    // Setup Invoice
-    const { date, number } = request.invoice;
+    const handleInvoice = this.handleRequestInvoice(request.invoice);
+    const handleSupplier = this.handleRequestSupplier(request.supplier);
+    const products = await Promise.all(request.products.map(async p => await this.handleRequestProduct(p)));
+
+    const [invoice, supplierId] = await Promise.all([handleInvoice, handleSupplier]);
+
+    return {
+      invoice,
+      supplierId,
+      products,
+    };
+  }
+
+  private async handleRequestInvoice(request: RegisterPurchaseRequestDTOInvoice): Promise<PurchaseInvoice> {
+    const { date, number } = request;
     const purchaseInvoice = PurchaseInvoice.create({
       value: {
         date: InvoiceDate.create({ value: date }),
@@ -45,17 +63,16 @@ export class RegisterPurchaseUseCase implements UseCase<RegisterPurchaseRequestD
     });
     const invoice = Invoice.create({ date: purchaseInvoice.date, number: purchaseInvoice.number, type: 'purchase' });
     await this.invoicesRepo.save(invoice);
+    return purchaseInvoice;
+  }
 
-    // Setup Supplier
-    let supplierId: SupplierId;
-    if (request.supplier.id) {
-      const id = SupplierId.create(new UniqueEntityID(request.supplier.id));
+  private async handleRequestSupplier(request: RegisterPurchaseRequestDTOSupplier): Promise<SupplierId> {
+    if (request.id) {
+      const id = SupplierId.create(new UniqueEntityID(request.id));
       const supplier = await this.suppliersRepo.findById(id);
-      if (supplier) {
-        supplierId = supplier.supplierId;
-      }
-    } else if (request.supplier.new) {
-      const { cuit, mail, name, phone } = request.supplier.new;
+      if (supplier) return supplier.supplierId;
+    } else if (request.new) {
+      const { cuit, mail, name, phone } = request.new;
       const supplier = Supplier.create({
         cuit: SupplierCuit.create({ value: cuit }),
         mail: SupplierMail.create({ value: mail }),
@@ -63,53 +80,44 @@ export class RegisterPurchaseUseCase implements UseCase<RegisterPurchaseRequestD
         phone: SupplierPhone.create({ value: phone }),
       });
       await this.suppliersRepo.save(supplier);
-      supplierId = supplier.supplierId;
+      return supplier.supplierId;
+    }
+  }
+
+  private async handleRequestProduct(request: RegisterPurchaseRequestDTOProduct): Promise<PurchaseProduct> {
+    let product: Product;
+
+    if (request.id) {
+      const productId = ProductId.create(new UniqueEntityID(request.id));
+      product = await this.productsRepo.findById(productId);
+    } else if (request.new) {
+      let category: Category;
+
+      if (request.new.category.id) {
+        const categoryId = CategoryId.create(new UniqueEntityID(request.new.category.id));
+        category = await this.categoriesRepo.findById(categoryId);
+      } else if (request.new.category.new) {
+        category = Category.create({ name: CategoryName.create({ value: request.new.category.new }) });
+        await this.categoriesRepo.save(category);
+      }
+
+      product = Product.create({
+        category,
+        name: ProductName.create({ value: request.new.name }),
+        price: ProductPrice.create({ value: request.price }),
+        stock: ProductStock.create({ value: request.quantity }),
+      });
+
+      await this.productsRepo.save(product);
     }
 
-    // Setup Products
-    const products = await Promise.all(
-      request.products.map(async raw => {
-        let product: Product;
-
-        if (raw.id) {
-          const productId = ProductId.create(new UniqueEntityID(raw.id));
-          product = await this.productsRepo.findById(productId);
-        } else if (raw.new) {
-          let category: Category;
-
-          if (raw.new.category.id) {
-            const categoryId = CategoryId.create(new UniqueEntityID(raw.new.category.id));
-            category = await this.categoriesRepo.findById(categoryId);
-          } else if (raw.new.category.new) {
-            category = Category.create({ name: CategoryName.create({ value: raw.new.category.new }) });
-            await this.categoriesRepo.save(category);
-          }
-
-          product = Product.create({
-            category,
-            name: ProductName.create({ value: raw.new.name }),
-            price: ProductPrice.create({ value: raw.price }),
-            stock: ProductStock.create({ value: raw.quantity }),
-          });
-
-          await this.productsRepo.save(product);
-        }
-
-        return PurchaseProduct.create(
-          {
-            category: product.category,
-            price: product.price,
-            quantity: PurchaseProductQuantity.create({ value: raw.quantity }),
-          },
-          product.productId.id,
-        );
-      }),
+    return PurchaseProduct.create(
+      {
+        category: product.category,
+        price: product.price,
+        quantity: PurchaseProductQuantity.create({ value: request.quantity }),
+      },
+      product.productId.id,
     );
-
-    return {
-      invoice: purchaseInvoice,
-      supplierId,
-      products,
-    };
   }
 }

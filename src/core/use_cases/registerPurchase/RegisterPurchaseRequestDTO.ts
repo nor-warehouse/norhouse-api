@@ -1,27 +1,33 @@
+export interface RegisterPurchaseRequestDTOProduct {
+  id?: string;
+  new?: {
+    name: string;
+    category: {
+      id?: string;
+      new?: string;
+    };
+  };
+  price: number;
+  quantity: number;
+}
+
+export interface RegisterPurchaseRequestDTOInvoice {
+  number: string;
+  date: Date;
+}
+
+export interface RegisterPurchaseRequestDTOSupplier {
+  id?: string;
+  new?: {
+    name: string;
+    cuit: string;
+    phone: string;
+    mail: string;
+  };
+}
+
 export interface RegisterPurchaseRequestDTO {
-  invoice: {
-    number: string;
-    date: Date;
-  };
-  products: {
-    id?: string;
-    new?: {
-      name: string;
-      category: {
-        id?: string;
-        new?: string;
-      };
-    };
-    price: number;
-    quantity: number;
-  }[];
-  supplier: {
-    id?: string;
-    new?: {
-      name: string;
-      cuit: string;
-      phone: string;
-      mail: string;
-    };
-  };
+  invoice: RegisterPurchaseRequestDTOInvoice;
+  products: RegisterPurchaseRequestDTOProduct[];
+  supplier: RegisterPurchaseRequestDTOSupplier;
 }

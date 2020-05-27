@@ -138,25 +138,7 @@ test('Given a valid RegisterPurchaseRequestDTO with new product, when purchase i
 
     const storedProduct = await productsRepo.findById(product.productId);
     expect(storedProduct.productId.equals(product.productId)).toBe(true);
-  });
-});
-
-test('Given a valid RegisterPurchaseRequestDTO with new product and new category, when purchase is registered, then a Product and Category should be created', async () => {
-  givenARegisterPurchaseRequestWithNewProductAndNewCategory();
-  await whenPurchaseIsRegistered();
-  expect(purchase).toHaveProperty('products');
-  expect(purchase.products).toHaveLength(1);
-
-  purchase.products.forEach(async (product, i) => {
-    expect(product.category).toHaveProperty('categoryId');
-    expect(product.category).not.toBeFalsy();
-    expect(product.category.categoryId).not.toBeFalsy();
-
-    const storedProduct = await productsRepo.findById(product.productId);
-    expect(storedProduct.productId.equals(product.productId)).toBe(true);
-
-    const storedCategory = await categoriesRepo.findById(product.categoryId);
-    expect(storedCategory.categoryId.equals(product.categoryId)).toBe(true);
+    expect(storedProduct.stock.value).toEqual(3);
   });
 });
 
@@ -203,22 +185,6 @@ function givenARegisterPurchaseRequestWithNewProduct(): void {
         },
         price: 12,
         quantity: 3,
-      },
-    ],
-  };
-}
-
-function givenARegisterPurchaseRequestWithNewProductAndNewCategory(): void {
-  request = {
-    ...basePurchaseRequestDTO,
-    products: [
-      {
-        new: {
-          name: 'jabon anti bacterial',
-          category: { new: 'jabones' },
-        },
-        price: 140,
-        quantity: 32,
       },
     ],
   };
