@@ -17,6 +17,8 @@ import { ProductStock } from '../../domain/product/product/ProductStock';
 import { PurchaseInvoice } from '../../domain/purchase/invoice/PurchaseInvoice';
 import { PurchaseProduct } from '../../domain/purchase/product/PurchaseProduct';
 import { PurchaseProductQuantity } from '../../domain/purchase/product/PurchaseProductQuantity';
+import { Purchase } from '../../domain/purchase/purchase/Purchase';
+import { PurchasesRepository } from '../../domain/purchase/purchase/PurchasesRepository';
 import { Supplier } from '../../domain/supplier/Supplier';
 import { SupplierCuit } from '../../domain/supplier/SupplierCuit';
 import { SupplierId } from '../../domain/supplier/SupplierId';
@@ -37,20 +39,16 @@ export class RegisterPurchaseUseCase implements UseCase<RegisterPurchaseRequestD
     private suppliersRepo: SuppliersRepository,
     private categoriesRepo: CategoriesRepository,
     private productsRepo: ProductsRepository,
+    private purchasesRepo: PurchasesRepository,
   ) {}
 
-  async execute(request: RegisterPurchaseRequestDTO): Promise<any> {
+  async execute(request: RegisterPurchaseRequestDTO): Promise<Purchase> {
     const handleInvoice = this.handleRequestInvoice(request.invoice);
     const handleSupplier = this.handleRequestSupplier(request.supplier);
     const products = await Promise.all(request.products.map(async p => await this.handleRequestProduct(p)));
-
     const [invoice, supplierId] = await Promise.all([handleInvoice, handleSupplier]);
 
-    return {
-      invoice,
-      supplierId,
-      products,
-    };
+    return await this.createPurchase(invoice, supplierId, products);
   }
 
   private async handleRequestInvoice(request: RegisterPurchaseRequestDTOInvoice): Promise<PurchaseInvoice> {
@@ -121,5 +119,21 @@ export class RegisterPurchaseUseCase implements UseCase<RegisterPurchaseRequestD
       },
       product.productId.id,
     );
+  }
+
+  private async createPurchase(
+    invoice: PurchaseInvoice,
+    supplierId: SupplierId,
+    products: PurchaseProduct[],
+  ): Promise<Purchase> {
+    const purchase = Purchase.create({
+      invoice,
+      supplierId,
+      products,
+    });
+
+    await this.purchasesRepo.save(purchase);
+
+    return purchase;
   }
 }

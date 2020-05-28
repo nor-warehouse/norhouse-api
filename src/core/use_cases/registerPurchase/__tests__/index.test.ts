@@ -12,6 +12,8 @@ import { ProductsRepository } from '../../../domain/product/product/ProductsRepo
 import { ProductStock } from '../../../domain/product/product/ProductStock';
 import { PurchaseInvoice } from '../../../domain/purchase/invoice/PurchaseInvoice';
 import { PurchaseProduct } from '../../../domain/purchase/product/PurchaseProduct';
+import { Purchase } from '../../../domain/purchase/purchase/Purchase';
+import { PurchasesRepository } from '../../../domain/purchase/purchase/PurchasesRepository';
 import { Supplier } from '../../../domain/supplier/Supplier';
 import { SupplierCuit } from '../../../domain/supplier/SupplierCuit';
 import { SupplierMail } from '../../../domain/supplier/SupplierMail';
@@ -21,19 +23,27 @@ import { SuppliersRepository } from '../../../domain/supplier/SuppliersRepositor
 import { InRuntimeMemoryInvoicesRepository } from '../../../infrastructure/invoice/InRuntimeMemoryInvoicesRepository';
 import { InMemoryCategoriesRepository } from '../../../infrastructure/product/InMemoryCategoriesRepository';
 import { InMemoryProductsRepository } from '../../../infrastructure/product/InMemoryProductsRepository';
+import { InMemoryPurchasesRepository } from '../../../infrastructure/purchase/InMemoryPurchasesRepository';
 import { InRuntimeMemorySuppliersRepository } from '../../../infrastructure/supplier/InRuntimeMemorySuppliersRepository';
 import { RegisterPurchaseRequestDTO } from '../RegisterPurchaseRequestDTO';
 import { RegisterPurchaseUseCase } from '../RegisterPurchaseUseCase';
 
 let request: RegisterPurchaseRequestDTO;
-let purchase: any;
+let purchase: Purchase;
 
 const invoicesRepo: InvoicesRepository = new InRuntimeMemoryInvoicesRepository();
 let suppliersRepo: SuppliersRepository = new InRuntimeMemorySuppliersRepository();
 let categoriesRepo: CategoriesRepository = new InMemoryCategoriesRepository();
 let productsRepo: ProductsRepository = new InMemoryProductsRepository();
+let purchasesRepo: PurchasesRepository = new InMemoryPurchasesRepository();
 
-let registerPurchase = new RegisterPurchaseUseCase(invoicesRepo, suppliersRepo, categoriesRepo, productsRepo);
+let registerPurchase = new RegisterPurchaseUseCase(
+  invoicesRepo,
+  suppliersRepo,
+  categoriesRepo,
+  productsRepo,
+  purchasesRepo,
+);
 
 beforeEach(() => cleanUp());
 
@@ -181,6 +191,16 @@ test('Given a valid RegisterPurchaseRequestDTO with existing products, when purc
   expect(storedProduct.stock.value).toEqual(100);
 });
 
+test('Given a RegisterPurchaseRequestDTO, when a purchase is registered, then a Purchase should be created', async () => {
+  givenARegisterPurchaseRequest();
+  await whenPurchaseIsRegisteredWithProducts();
+  expect(purchase).toBeInstanceOf(Purchase);
+
+  const storedPurchase = await purchasesRepo.findById(purchase.purchaseId);
+  expect(storedPurchase).not.toBeFalsy();
+  expect(storedPurchase.purchaseId.equals(purchase.purchaseId)).toBe(true);
+});
+
 const basePurchaseRequestDTO: RegisterPurchaseRequestDTO = {
   invoice: {
     date: new Date(1956, 9, 10),
@@ -260,7 +280,14 @@ function cleanUp(): void {
   suppliersRepo = new InRuntimeMemorySuppliersRepository();
   categoriesRepo = new InMemoryCategoriesRepository();
   productsRepo = new InMemoryProductsRepository();
-  registerPurchase = new RegisterPurchaseUseCase(invoicesRepo, suppliersRepo, categoriesRepo, productsRepo);
+  purchasesRepo = new InMemoryPurchasesRepository();
+  registerPurchase = new RegisterPurchaseUseCase(
+    invoicesRepo,
+    suppliersRepo,
+    categoriesRepo,
+    productsRepo,
+    purchasesRepo,
+  );
 }
 
 function createCategory(id): Category {
