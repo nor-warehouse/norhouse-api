@@ -1,16 +1,3 @@
-export interface RegisterPurchaseRequestDTOProduct {
-  id?: string;
-  new?: {
-    name: string;
-    category: {
-      id?: string;
-      new?: string;
-    };
-  };
-  price: number;
-  quantity: number;
-}
-
 export interface RegisterPurchaseRequestDTOInvoice {
   number: string;
   date: Date;
@@ -24,6 +11,19 @@ export interface RegisterPurchaseRequestDTOSupplier {
     phone: string;
     mail: string;
   };
+}
+
+export interface RegisterPurchaseRequestDTOProduct {
+  id?: string;
+  new?: {
+    name: string;
+    category: {
+      id?: string;
+      new?: string;
+    };
+  };
+  price: number;
+  quantity: number;
 }
 
 export interface RegisterPurchaseRequestDTO {

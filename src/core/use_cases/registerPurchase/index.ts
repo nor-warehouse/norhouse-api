@@ -3,6 +3,7 @@ import { InMemoryCategoriesRepository } from '../../infrastructure/product/InMem
 import { InMemoryProductsRepository } from '../../infrastructure/product/InMemoryProductsRepository';
 import { InMemoryPurchasesRepository } from '../../infrastructure/purchase/InMemoryPurchasesRepository';
 import { InRuntimeMemorySuppliersRepository } from '../../infrastructure/supplier/InRuntimeMemorySuppliersRepository';
+import { RegisterPurchaseController } from './RegisterPurchaseController';
 import { RegisterPurchaseUseCase } from './RegisterPurchaseUseCase';
 
 const invoicesRepo = new InRuntimeMemoryInvoicesRepository();
@@ -18,3 +19,5 @@ export const registerPurchase = new RegisterPurchaseUseCase(
   productsRepo,
   purchasesRepo,
 );
+
+export const registerPurchaseController = new RegisterPurchaseController(registerPurchase);
