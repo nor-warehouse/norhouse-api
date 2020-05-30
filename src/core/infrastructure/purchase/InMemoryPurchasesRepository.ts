@@ -1,6 +1,6 @@
-import { Purchase } from '../../domain/purchase/purchase/Purchase';
-import { PurchaseId } from '../../domain/purchase/purchase/PurchaseId';
-import { PurchasesRepository } from '../../domain/purchase/purchase/PurchasesRepository';
+import { Purchase } from '../../domain/purchase/Purchase';
+import { PurchaseId } from '../../domain/purchase/PurchaseId';
+import { PurchasesRepository } from '../../domain/purchase/PurchasesRepository';
 
 export class InMemoryPurchasesRepository implements PurchasesRepository {
   private purchases: Purchase[] = [];

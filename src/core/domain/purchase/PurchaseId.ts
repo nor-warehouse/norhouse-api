@@ -1,5 +1,5 @@
-import { Entity } from '../../../../shared/core/Entity';
-import { UniqueEntityID } from '../../../../shared/core/UniqueEntityID';
+import { Entity } from '../../../shared/core/Entity';
+import { UniqueEntityID } from '../../../shared/core/UniqueEntityID';
 
 export class PurchaseId extends Entity<any> {
   get id(): UniqueEntityID {

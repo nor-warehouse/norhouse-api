@@ -1,8 +1,8 @@
-import { Entity } from '../../../../shared/core/Entity';
-import { UniqueEntityID } from '../../../../shared/core/UniqueEntityID';
-import { Invoice } from '../../invoice/Invoice';
-import { Supplier } from '../../supplier/Supplier';
-import { PurchaseProduct } from '../product/PurchaseProduct';
+import { Entity } from '../../../shared/core/Entity';
+import { UniqueEntityID } from '../../../shared/core/UniqueEntityID';
+import { Invoice } from '../invoice/Invoice';
+import { Supplier } from '../supplier/Supplier';
+import { PurchaseProduct } from './product/PurchaseProduct';
 import { PurchaseId } from './PurchaseId';
 
 interface PurchaseProps {

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { BaseController } from '../../../shared/infrastructure/BaseController';
-import { PurchaseDTO } from '../../domain/purchase/purchase/PurchaseDTO';
-import { PurchaseMapper } from '../../domain/purchase/purchase/PurchaseMapper';
+import { PurchaseDTO } from '../../domain/purchase/PurchaseDTO';
+import { PurchaseMapper } from '../../domain/purchase/PurchaseMapper';
 import { RegisterPurchaseRequestDTO } from './RegisterPurchaseRequestDTO';
 import { RegisterPurchaseUseCase } from './RegisterPurchaseUseCase';
 
