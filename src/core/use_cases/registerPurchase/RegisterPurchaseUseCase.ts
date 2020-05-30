@@ -46,9 +46,9 @@ export class RegisterPurchaseUseCase implements UseCase<RegisterPurchaseRequestD
     const handleInvoice = this.handleRequestInvoice(request.invoice);
     const handleSupplier = this.handleRequestSupplier(request.supplier);
     const products = await Promise.all(request.products.map(async p => await this.handleRequestProduct(p)));
-    const [invoice, supplierId] = await Promise.all([handleInvoice, handleSupplier]);
+    const [invoice, supplier] = await Promise.all([handleInvoice, handleSupplier]);
 
-    return await this.createPurchase(invoice, supplierId, products);
+    return await this.createPurchase(invoice, supplier, products);
   }
 
   private async handleRequestInvoice(request: RegisterPurchaseRequestDTOInvoice): Promise<Invoice> {
@@ -62,11 +62,11 @@ export class RegisterPurchaseUseCase implements UseCase<RegisterPurchaseRequestD
     return invoice;
   }
 
-  private async handleRequestSupplier(request: RegisterPurchaseRequestDTOSupplier): Promise<SupplierId> {
+  private async handleRequestSupplier(request: RegisterPurchaseRequestDTOSupplier): Promise<Supplier> {
     if (request.id) {
       const id = SupplierId.create(new UniqueEntityID(request.id));
       const supplier = await this.suppliersRepo.findById(id);
-      if (supplier) return supplier.supplierId;
+      if (supplier) return supplier;
     } else if (request.new) {
       const { cuit, mail, name, phone } = request.new;
       const supplier = Supplier.create({
@@ -76,7 +76,7 @@ export class RegisterPurchaseUseCase implements UseCase<RegisterPurchaseRequestD
         phone: SupplierPhone.create({ value: phone }),
       });
       await this.suppliersRepo.save(supplier);
-      return supplier.supplierId;
+      return supplier;
     }
   }
 
@@ -119,14 +119,10 @@ export class RegisterPurchaseUseCase implements UseCase<RegisterPurchaseRequestD
     );
   }
 
-  private async createPurchase(
-    invoice: Invoice,
-    supplierId: SupplierId,
-    products: PurchaseProduct[],
-  ): Promise<Purchase> {
+  private async createPurchase(invoice: Invoice, supplier: Supplier, products: PurchaseProduct[]): Promise<Purchase> {
     const purchase = Purchase.create({
       invoice,
-      supplierId,
+      supplier,
       products,
     });
 

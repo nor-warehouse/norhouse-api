@@ -97,22 +97,20 @@ test('Given a valid RegisterPurchaseRequestDTO with existing supplier, when purc
 
   givenARegisterPurchaseRequest();
   await whenPurchaseIsRegisteredWithProducts();
-  expect(purchase).toHaveProperty('supplierId');
-  expect(purchase.supplierId.id.toValue()).toEqual(request.supplier.id);
+  expect(purchase).toHaveProperty('supplier');
+  expect(purchase.supplier.supplierId.id.toValue()).toEqual(request.supplier.id);
 });
 
 test('Given a valid RegisterPurchaseRequestDTO with a new supplier, when purchase is registered, then should save a new Supplier', async () => {
   givenARegisterPurchaseRequestWithNewSupplier();
   await whenPurchaseIsRegisteredWithProducts();
-  expect(purchase).toHaveProperty('supplierId');
-  expect(purchase.supplierId).not.toBeFalsy();
 
-  const supplier = await suppliersRepo.findById(purchase.supplierId);
-  expect(supplier.supplierId.equals(purchase.supplierId)).toBe(true);
-  expect(supplier.cuit.value).toEqual(request.supplier.new.cuit);
-  expect(supplier.mail.value).toEqual(request.supplier.new.mail);
-  expect(supplier.name.value).toEqual(request.supplier.new.name);
-  expect(supplier.phone.value).toEqual(request.supplier.new.phone);
+  const supplier = await suppliersRepo.findById(purchase.supplier.supplierId);
+  expect(supplier.supplierId.equals(purchase.supplier.supplierId)).toBe(true);
+  expect(supplier.cuit.value).toEqual(purchase.supplier.cuit.value);
+  expect(supplier.mail.value).toEqual(purchase.supplier.mail.value);
+  expect(supplier.name.value).toEqual(purchase.supplier.name.value);
+  expect(supplier.phone.value).toEqual(purchase.supplier.phone.value);
 });
 
 test('Given a valid RegisterPurchaseRequestDTO with existing products, when purchase is registered, then Purchase should have PurchaseProducts', async () => {
