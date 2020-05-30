@@ -1,9 +1,11 @@
 export interface PurchaseDTO {
   invoice: {
+    id: string;
     number: string;
-    date: Date;
   };
-  supplierId: string;
+  supplier: {
+    id: string;
+  };
   products: {
     id: string;
     name: string;
