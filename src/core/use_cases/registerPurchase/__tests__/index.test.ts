@@ -127,6 +127,7 @@ test('Given a valid RegisterPurchaseRequestDTO with existing products, when purc
     expect(product.price.value).toEqual(rawProduct.price);
     expect(product.quantity.value).toEqual(rawProduct.quantity);
     expect(product.totalPrice).toEqual(rawProduct.price * rawProduct.quantity);
+    expect(product.name).toBeDefined();
   });
 });
 

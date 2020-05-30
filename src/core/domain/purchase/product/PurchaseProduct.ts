@@ -2,11 +2,13 @@ import { Entity } from '../../../../shared/core/Entity';
 import { UniqueEntityID } from '../../../../shared/core/UniqueEntityID';
 import { Category } from '../../product/category/Category';
 import { ProductId } from '../../product/ProductId';
+import { ProductName } from '../../product/ProductName';
 import { ProductPrice } from '../../product/ProductPrice';
 import { PurchaseProductQuantity } from './PurchaseProductQuantity';
 
 interface PurchaseProductProps {
   category: Category;
+  name: ProductName;
   price: ProductPrice;
   quantity: PurchaseProductQuantity;
 }
@@ -26,6 +28,10 @@ export class PurchaseProduct extends Entity<PurchaseProductProps> {
 
   get category(): Category {
     return this.props.category;
+  }
+
+  get name(): ProductName {
+    return this.props.name;
   }
 
   get price(): ProductPrice {

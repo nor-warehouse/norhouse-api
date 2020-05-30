@@ -112,6 +112,7 @@ export class RegisterPurchaseUseCase implements UseCase<RegisterPurchaseRequestD
     return PurchaseProduct.create(
       {
         category: product.category,
+        name: product.name,
         price: product.price,
         quantity: PurchaseProductQuantity.create({ value: request.quantity }),
       },

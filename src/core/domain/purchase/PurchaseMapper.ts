@@ -11,7 +11,7 @@ export class PurchaseMapper {
       supplier: { id: purchase.supplier.supplierId.id.toString() },
       products: purchase.products.map(product => ({
         id: product.productId.id.toString(),
-        name: 'name',
+        name: product.name.value,
         price: product.price.value,
         quantity: product.quantity.value,
         totalPrice: product.totalPrice,
