@@ -33,7 +33,7 @@ import {
   RegisterPurchaseRequestDTOSupplier,
 } from './RegisterPurchaseRequestDTO';
 
-export class RegisterPurchaseUseCase implements UseCase<RegisterPurchaseRequestDTO> {
+export class RegisterPurchaseUseCase implements UseCase<RegisterPurchaseRequestDTO, Purchase> {
   constructor(
     private invoicesRepo: InvoicesRepository,
     private suppliersRepo: SuppliersRepository,
