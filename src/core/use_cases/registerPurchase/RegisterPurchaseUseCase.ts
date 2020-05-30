@@ -32,6 +32,7 @@ import {
   RegisterPurchaseRequestDTOProduct,
   RegisterPurchaseRequestDTOSupplier,
 } from './RegisterPurchaseRequestDTO';
+import { PurchaseTotal } from '../../domain/purchase/PurchaseTotal';
 
 export class RegisterPurchaseUseCase implements UseCase<RegisterPurchaseRequestDTO, Purchase> {
   constructor(
@@ -125,6 +126,7 @@ export class RegisterPurchaseUseCase implements UseCase<RegisterPurchaseRequestD
       invoice,
       supplier,
       products,
+      total: PurchaseTotal.create({ value: products })
     });
 
     await this.purchasesRepo.save(purchase);

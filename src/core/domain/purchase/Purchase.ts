@@ -4,11 +4,13 @@ import { Invoice } from '../invoice/Invoice';
 import { Supplier } from '../supplier/Supplier';
 import { PurchaseProduct } from './product/PurchaseProduct';
 import { PurchaseId } from './PurchaseId';
+import { PurchaseTotal } from './PurchaseTotal';
 
 interface PurchaseProps {
   invoice: Invoice;
   supplier: Supplier;
   products: PurchaseProduct[];
+  total: PurchaseTotal;
 }
 
 export class Purchase extends Entity<PurchaseProps> {
@@ -34,5 +36,9 @@ export class Purchase extends Entity<PurchaseProps> {
 
   get products(): PurchaseProduct[] {
     return this.props.products;
+  }
+
+  get total(): PurchaseTotal {
+    return this.props.total;
   }
 }

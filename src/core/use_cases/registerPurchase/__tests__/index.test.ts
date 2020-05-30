@@ -201,6 +201,12 @@ test('Given a RegisterPurchaseRequestDTO, when a purchase is registered, then a 
   expect(storedPurchase.purchaseId.equals(purchase.purchaseId)).toBe(true);
 });
 
+test('Given a RegisterPurchaseRequestDTO, when a purchase is registered, then Purchase must include the total price', async () => {
+  givenARegisterPurchaseRequest();
+  await whenPurchaseIsRegisteredWithProducts();
+  expect(purchase.total.value).toEqual(2640);
+});
+
 const basePurchaseRequestDTO: RegisterPurchaseRequestDTO = {
   invoice: {
     date: new Date(1956, 9, 10),
