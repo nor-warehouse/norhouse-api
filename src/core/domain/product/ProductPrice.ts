@@ -1,4 +1,4 @@
-import { ValueObject } from '../../../../shared/core/ValueObject';
+import { ValueObject } from '../../../shared/core/ValueObject';
 
 interface ProductPriceProps {
   value: number;

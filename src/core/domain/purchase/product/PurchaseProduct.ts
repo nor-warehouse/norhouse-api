@@ -1,8 +1,8 @@
 import { Entity } from '../../../../shared/core/Entity';
 import { UniqueEntityID } from '../../../../shared/core/UniqueEntityID';
 import { Category } from '../../product/category/Category';
-import { ProductId } from '../../product/product/ProductId';
-import { ProductPrice } from '../../product/product/ProductPrice';
+import { ProductId } from '../../product/ProductId';
+import { ProductPrice } from '../../product/ProductPrice';
 import { PurchaseProductQuantity } from './PurchaseProductQuantity';
 
 interface PurchaseProductProps {

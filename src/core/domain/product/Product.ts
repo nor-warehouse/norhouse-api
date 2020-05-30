@@ -1,6 +1,6 @@
-import { Entity } from '../../../../shared/core/Entity';
-import { UniqueEntityID } from '../../../../shared/core/UniqueEntityID';
-import { Category } from '../category/Category';
+import { Entity } from '../../../shared/core/Entity';
+import { UniqueEntityID } from '../../../shared/core/UniqueEntityID';
+import { Category } from './category/Category';
 import { ProductId } from './ProductId';
 import { ProductName } from './ProductName';
 import { ProductPrice } from './ProductPrice';
