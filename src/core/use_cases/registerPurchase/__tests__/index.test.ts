@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { UniqueEntityID } from '../../../../shared/core/UniqueEntityID';
+import { Invoice } from '../../../domain/invoice/Invoice';
 import { InvoiceNumber } from '../../../domain/invoice/InvoiceNumber';
 import { InvoicesRepository } from '../../../domain/invoice/InvoicesRepository';
+import { InvoiceTypes } from '../../../domain/invoice/InvoiceType';
 import { CategoriesRepository } from '../../../domain/product/category/CategoriesRepository';
 import { Category } from '../../../domain/product/category/Category';
 import { CategoryName } from '../../../domain/product/category/CategoryName';
@@ -10,7 +12,6 @@ import { ProductName } from '../../../domain/product/product/ProductName';
 import { ProductPrice } from '../../../domain/product/product/ProductPrice';
 import { ProductsRepository } from '../../../domain/product/product/ProductsRepository';
 import { ProductStock } from '../../../domain/product/product/ProductStock';
-import { PurchaseInvoice } from '../../../domain/purchase/invoice/PurchaseInvoice';
 import { PurchaseProduct } from '../../../domain/purchase/product/PurchaseProduct';
 import { Purchase } from '../../../domain/purchase/purchase/Purchase';
 import { PurchasesRepository } from '../../../domain/purchase/purchase/PurchasesRepository';
@@ -56,7 +57,11 @@ test('Given a valid RegisterPurchaseRequestDTO, when purchase is registered, the
   givenARegisterPurchaseRequest();
   await whenPurchaseIsRegisteredWithProducts();
   expect(purchase).toHaveProperty('invoice');
-  expect(purchase.invoice).toBeInstanceOf(PurchaseInvoice);
+  expect(purchase.invoice).toBeInstanceOf(Invoice);
+  expect(purchase.invoice).toHaveProperty('invoiceId');
+  expect(purchase.invoice.invoiceId.id.toValue()).not.toBeFalsy();
+  expect(purchase.invoice).toHaveProperty('type');
+  expect(purchase.invoice.type).toEqual(InvoiceTypes.purchase);
   expect(purchase.invoice).toHaveProperty('date');
   expect(purchase.invoice.date.value).toEqual(request.invoice.date);
   expect(purchase.invoice).toHaveProperty('number');
@@ -71,12 +76,8 @@ test('Given a valid RegisterPurchaseRequestDTO, when purchase is registered, the
   const invoice = await invoicesRepo.findByNumber(invoiceNumber);
 
   expect(invoice).not.toBeFalsy();
-  expect(invoice).toHaveProperty('type');
-  expect(invoice.type).toEqual('purchase');
-  expect(invoice).toHaveProperty('date');
-  expect(invoice.date.value).toEqual(request.invoice.date);
-  expect(invoice).toHaveProperty('number');
-  expect(invoice.number.value).toEqual(request.invoice.number);
+  expect(invoice).toBeInstanceOf(Invoice);
+  expect(invoice.number.value).toEqual(purchase.invoice.number.value);
 });
 
 test('Given a valid RegisterPurchaseRequestDTO with existing supplier, when purchase is registered, then Purchase should have its id', async () => {

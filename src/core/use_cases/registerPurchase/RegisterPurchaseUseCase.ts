@@ -4,6 +4,7 @@ import { Invoice } from '../../domain/invoice/Invoice';
 import { InvoiceDate } from '../../domain/invoice/InvoiceDate';
 import { InvoiceNumber } from '../../domain/invoice/InvoiceNumber';
 import { InvoicesRepository } from '../../domain/invoice/InvoicesRepository';
+import { InvoiceTypes } from '../../domain/invoice/InvoiceType';
 import { CategoriesRepository } from '../../domain/product/category/CategoriesRepository';
 import { Category } from '../../domain/product/category/Category';
 import { CategoryId } from '../../domain/product/category/CategoryId';
@@ -14,7 +15,6 @@ import { ProductName } from '../../domain/product/product/ProductName';
 import { ProductPrice } from '../../domain/product/product/ProductPrice';
 import { ProductsRepository } from '../../domain/product/product/ProductsRepository';
 import { ProductStock } from '../../domain/product/product/ProductStock';
-import { PurchaseInvoice } from '../../domain/purchase/invoice/PurchaseInvoice';
 import { PurchaseProduct } from '../../domain/purchase/product/PurchaseProduct';
 import { PurchaseProductQuantity } from '../../domain/purchase/product/PurchaseProductQuantity';
 import { Purchase } from '../../domain/purchase/purchase/Purchase';
@@ -51,17 +51,15 @@ export class RegisterPurchaseUseCase implements UseCase<RegisterPurchaseRequestD
     return await this.createPurchase(invoice, supplierId, products);
   }
 
-  private async handleRequestInvoice(request: RegisterPurchaseRequestDTOInvoice): Promise<PurchaseInvoice> {
+  private async handleRequestInvoice(request: RegisterPurchaseRequestDTOInvoice): Promise<Invoice> {
     const { date, number } = request;
-    const purchaseInvoice = PurchaseInvoice.create({
-      value: {
-        date: InvoiceDate.create({ value: date }),
-        number: InvoiceNumber.create({ value: number }),
-      },
+    const invoice = Invoice.create({
+      date: InvoiceDate.create({ value: date }),
+      number: InvoiceNumber.create({ value: number }),
+      type: InvoiceTypes.purchase,
     });
-    const invoice = Invoice.create({ date: purchaseInvoice.date, number: purchaseInvoice.number, type: 'purchase' });
     await this.invoicesRepo.save(invoice);
-    return purchaseInvoice;
+    return invoice;
   }
 
   private async handleRequestSupplier(request: RegisterPurchaseRequestDTOSupplier): Promise<SupplierId> {
@@ -122,7 +120,7 @@ export class RegisterPurchaseUseCase implements UseCase<RegisterPurchaseRequestD
   }
 
   private async createPurchase(
-    invoice: PurchaseInvoice,
+    invoice: Invoice,
     supplierId: SupplierId,
     products: PurchaseProduct[],
   ): Promise<Purchase> {
