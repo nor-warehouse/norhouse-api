@@ -2,14 +2,14 @@ import { Entity } from '../../../shared/core/Entity';
 import { UniqueEntityID } from '../../../shared/core/UniqueEntityID';
 import { Invoice } from '../invoice/Invoice';
 import { Supplier } from '../supplier/Supplier';
-import { PurchaseProduct } from './product/PurchaseProduct';
+import { TransactionProduct } from '../TransactionProduct/TransactionProduct';
 import { PurchaseId } from './PurchaseId';
 import { PurchaseTotal } from './PurchaseTotal';
 
 interface PurchaseProps {
   invoice: Invoice;
   supplier: Supplier;
-  products: PurchaseProduct[];
+  products: TransactionProduct[];
   total: PurchaseTotal;
 }
 
@@ -34,7 +34,7 @@ export class Purchase extends Entity<PurchaseProps> {
     return this.props.supplier;
   }
 
-  get products(): PurchaseProduct[] {
+  get products(): TransactionProduct[] {
     return this.props.products;
   }
 

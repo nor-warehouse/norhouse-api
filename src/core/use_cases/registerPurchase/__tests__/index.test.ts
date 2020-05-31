@@ -12,7 +12,6 @@ import { ProductName } from '../../../domain/product/ProductName';
 import { ProductPrice } from '../../../domain/product/ProductPrice';
 import { ProductsRepository } from '../../../domain/product/ProductsRepository';
 import { ProductStock } from '../../../domain/product/ProductStock';
-import { PurchaseProduct } from '../../../domain/purchase/product/PurchaseProduct';
 import { Purchase } from '../../../domain/purchase/Purchase';
 import { PurchasesRepository } from '../../../domain/purchase/PurchasesRepository';
 import { Cuit } from '../../../domain/shared/Cuit';
@@ -21,6 +20,7 @@ import { Phone } from '../../../domain/shared/Phone';
 import { Supplier } from '../../../domain/supplier/Supplier';
 import { SupplierName } from '../../../domain/supplier/SupplierName';
 import { SuppliersRepository } from '../../../domain/supplier/SuppliersRepository';
+import { TransactionProduct } from '../../../domain/TransactionProduct/TransactionProduct';
 import { InRuntimeMemoryInvoicesRepository } from '../../../infrastructure/invoice/InRuntimeMemoryInvoicesRepository';
 import { InMemoryCategoriesRepository } from '../../../infrastructure/product/InMemoryCategoriesRepository';
 import { InMemoryProductsRepository } from '../../../infrastructure/product/InMemoryProductsRepository';
@@ -113,7 +113,7 @@ test('Given a valid RegisterPurchaseRequestDTO with a new supplier, when purchas
   expect(supplier.phone.value).toEqual(purchase.supplier.phone.value);
 });
 
-test('Given a valid RegisterPurchaseRequestDTO with existing products, when purchase is registered, then Purchase should have PurchaseProducts', async () => {
+test('Given a valid RegisterPurchaseRequestDTO with existing products, when purchase is registered, then Purchase should have TransactionProducts', async () => {
   givenARegisterPurchaseRequest();
   await whenPurchaseIsRegisteredWithProducts();
   expect(purchase).toHaveProperty('products');
@@ -121,7 +121,7 @@ test('Given a valid RegisterPurchaseRequestDTO with existing products, when purc
 
   purchase.products.forEach((product, i) => {
     const rawProduct = request.products[i];
-    expect(product).toBeInstanceOf(PurchaseProduct);
+    expect(product).toBeInstanceOf(TransactionProduct);
     expect(product.productId.id.toValue()).toEqual(rawProduct.id);
     expect(product.category.categoryId.id.toValue()).toEqual('8');
     expect(product.price.value).toEqual(rawProduct.price);
@@ -139,7 +139,7 @@ test('Given a valid RegisterPurchaseRequestDTO with new product, when purchase i
 
   purchase.products.forEach(async (product, i) => {
     const rawProduct = request.products[i];
-    expect(product).toBeInstanceOf(PurchaseProduct);
+    expect(product).toBeInstanceOf(TransactionProduct);
     expect(product.productId).not.toBeFalsy();
     expect(product.category.categoryId.id.toValue()).toEqual('8');
     expect(product.price.value).toEqual(rawProduct.price);

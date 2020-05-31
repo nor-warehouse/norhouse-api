@@ -15,8 +15,6 @@ import { ProductName } from '../../domain/product/ProductName';
 import { ProductPrice } from '../../domain/product/ProductPrice';
 import { ProductsRepository } from '../../domain/product/ProductsRepository';
 import { ProductStock } from '../../domain/product/ProductStock';
-import { PurchaseProduct } from '../../domain/purchase/product/PurchaseProduct';
-import { PurchaseProductQuantity } from '../../domain/purchase/product/PurchaseProductQuantity';
 import { Purchase } from '../../domain/purchase/Purchase';
 import { PurchasesRepository } from '../../domain/purchase/PurchasesRepository';
 import { PurchaseTotal } from '../../domain/purchase/PurchaseTotal';
@@ -27,6 +25,8 @@ import { Supplier } from '../../domain/supplier/Supplier';
 import { SupplierId } from '../../domain/supplier/SupplierId';
 import { SupplierName } from '../../domain/supplier/SupplierName';
 import { SuppliersRepository } from '../../domain/supplier/SuppliersRepository';
+import { TransactionProduct } from '../../domain/TransactionProduct/TransactionProduct';
+import { TransactionProductQuantity } from '../../domain/TransactionProduct/TransactionProductQuantity';
 import {
   RegisterPurchaseRequestDTO,
   RegisterPurchaseRequestDTOInvoice,
@@ -81,7 +81,7 @@ export class RegisterPurchaseUseCase implements UseCase<RegisterPurchaseRequestD
     }
   }
 
-  private async handleRequestProduct(request: RegisterPurchaseRequestDTOProduct): Promise<PurchaseProduct> {
+  private async handleRequestProduct(request: RegisterPurchaseRequestDTOProduct): Promise<TransactionProduct> {
     let product: Product;
 
     if (request.id) {
@@ -110,18 +110,22 @@ export class RegisterPurchaseUseCase implements UseCase<RegisterPurchaseRequestD
       await this.productsRepo.save(product);
     }
 
-    return PurchaseProduct.create(
+    return TransactionProduct.create(
       {
         category: product.category,
         name: product.name,
         price: product.price,
-        quantity: PurchaseProductQuantity.create({ value: request.quantity }),
+        quantity: TransactionProductQuantity.create({ value: request.quantity }),
       },
       product.productId.id,
     );
   }
 
-  private async createPurchase(invoice: Invoice, supplier: Supplier, products: PurchaseProduct[]): Promise<Purchase> {
+  private async createPurchase(
+    invoice: Invoice,
+    supplier: Supplier,
+    products: TransactionProduct[],
+  ): Promise<Purchase> {
     const purchase = Purchase.create({
       invoice,
       supplier,

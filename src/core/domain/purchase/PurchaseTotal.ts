@@ -1,8 +1,8 @@
 import { ValueObject } from '../../../shared/core/ValueObject';
-import { PurchaseProduct } from './product/PurchaseProduct';
+import { TransactionProduct } from '../TransactionProduct/TransactionProduct';
 
 interface PurchaseTotalProps {
-  value: PurchaseProduct[];
+  value: TransactionProduct[];
 }
 
 export class PurchaseTotal extends ValueObject<{ value: number }> {
