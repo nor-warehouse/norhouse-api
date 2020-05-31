@@ -3,6 +3,9 @@ import { UniqueEntityID } from '../../../../shared/core/UniqueEntityID';
 import { Client } from '../../../domain/client/Client';
 import { ClientName } from '../../../domain/client/ClientName';
 import { ClientsRepository } from '../../../domain/client/ClientsRepository';
+import { Invoice } from '../../../domain/invoice/Invoice';
+import { InvoicesRepository } from '../../../domain/invoice/InvoicesRepository';
+import { InvoiceTypes } from '../../../domain/invoice/InvoiceType';
 import { Sale } from '../../../domain/sale/Sale';
 import { SaleId } from '../../../domain/sale/SaleId';
 import { SalesRepository } from '../../../domain/sale/SalesRepository';
@@ -10,19 +13,28 @@ import { Cuit } from '../../../domain/shared/Cuit';
 import { Mail } from '../../../domain/shared/Mail';
 import { Phone } from '../../../domain/shared/Phone';
 import { InMemoryClientsRepository } from '../../../infrastructure/client/InMemoryClientsRepository';
+import { InRuntimeMemoryInvoicesRepository } from '../../../infrastructure/invoice/InRuntimeMemoryInvoicesRepository';
 import { InMemorySalesRepository } from '../../../infrastructure/sale/InMemorySalesRepository';
 import { RegisterSaleRequestDTO, RegisterSaleRequestDTOClient } from '../RegisterSaleRequestDTO';
 import { RegisterSaleUseCase } from '../RegisterSaleUseCase';
 
-let request: RegisterSaleRequestDTO = { client: { id: '5' } };
+let request: RegisterSaleRequestDTO = {
+  client: { id: '5' },
+  invoice: {
+    date: new Date(),
+    number: '12-34-56',
+  },
+};
 let salesRepo: SalesRepository = new InMemorySalesRepository();
 let clientsRepo: ClientsRepository = new InMemoryClientsRepository();
-let registerSale = new RegisterSaleUseCase(salesRepo, clientsRepo);
+let invoicesRepo: InvoicesRepository = new InRuntimeMemoryInvoicesRepository();
+let registerSale = new RegisterSaleUseCase(salesRepo, clientsRepo, invoicesRepo);
 
 beforeEach(() => {
   salesRepo = new InMemorySalesRepository();
   clientsRepo = new InMemoryClientsRepository();
-  registerSale = new RegisterSaleUseCase(salesRepo, clientsRepo);
+  invoicesRepo = new InRuntimeMemoryInvoicesRepository();
+  registerSale = new RegisterSaleUseCase(salesRepo, clientsRepo, invoicesRepo);
 });
 
 test('Given a RegisterSaleRequestDTO, when sale is registered, then should create a Sale', async () => {
@@ -62,6 +74,19 @@ test('Given a RegisterSaleRequestDTO with new client, when sale is registered, t
   const sale = await registerSale.execute(request);
   const persistedClient = await clientsRepo.findById(sale.client.clientId);
   expect(persistedClient).toBeInstanceOf(Client);
+});
+
+test('Given a RegisterSaleRequestDTO, when sale is registered, then created Sale should have a sale type Invoice', async () => {
+  const sale = await registerSale.execute(request);
+  expect(sale.invoice).toBeDefined();
+  expect(sale.invoice).toBeInstanceOf(Invoice);
+  expect(sale.invoice.type).toEqual(InvoiceTypes.sale);
+});
+
+test('Given a RegisterSaleRequestDTO, when sale is registered, then created Invoice should be persisted', async () => {
+  const sale = await registerSale.execute(request);
+  const persistedInvoice = await invoicesRepo.findById(sale.invoice.invoiceId);
+  expect(persistedInvoice).toBeInstanceOf(Invoice);
 });
 
 function enhanceRequest(props: object): void {

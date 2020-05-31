@@ -21,6 +21,6 @@ export interface RegisterSaleRequestDTOProduct {
 
 export interface RegisterSaleRequestDTO {
   client: RegisterSaleRequestDTOClient;
-  // invoice: RegisterSaleRequestDTOInvoice;
+  invoice: RegisterSaleRequestDTOInvoice;
   // products: RegisterSaleRequestDTOProduct[];
 }
