@@ -1,16 +1,16 @@
 import { Entity } from '../../../shared/core/Entity';
 import { UniqueEntityID } from '../../../shared/core/UniqueEntityID';
-import { SupplierCuit } from './SupplierCuit';
+import { Cuit } from '../shared/Cuit';
+import { Mail } from '../shared/Mail';
+import { Phone } from '../shared/Phone';
 import { SupplierId } from './SupplierId';
-import { SupplierMail } from './SupplierMail';
 import { SupplierName } from './SupplierName';
-import { SupplierPhone } from './SupplierPhone';
 
 interface SupplierProps {
-  cuit: SupplierCuit;
-  mail: SupplierMail;
+  cuit: Cuit;
+  mail: Mail;
   name: SupplierName;
-  phone: SupplierPhone;
+  phone: Phone;
 }
 
 export class Supplier extends Entity<SupplierProps> {
@@ -26,11 +26,11 @@ export class Supplier extends Entity<SupplierProps> {
     return SupplierId.create(this._id);
   }
 
-  get cuit(): SupplierCuit {
+  get cuit(): Cuit {
     return this.props.cuit;
   }
 
-  get mail(): SupplierMail {
+  get mail(): Mail {
     return this.props.mail;
   }
 
@@ -38,7 +38,7 @@ export class Supplier extends Entity<SupplierProps> {
     return this.props.name;
   }
 
-  get phone(): SupplierPhone {
+  get phone(): Phone {
     return this.props.phone;
   }
 }

@@ -15,11 +15,11 @@ import { ProductStock } from '../../../domain/product/ProductStock';
 import { PurchaseProduct } from '../../../domain/purchase/product/PurchaseProduct';
 import { Purchase } from '../../../domain/purchase/Purchase';
 import { PurchasesRepository } from '../../../domain/purchase/PurchasesRepository';
+import { Cuit } from '../../../domain/shared/Cuit';
+import { Mail } from '../../../domain/shared/Mail';
+import { Phone } from '../../../domain/shared/Phone';
 import { Supplier } from '../../../domain/supplier/Supplier';
-import { SupplierCuit } from '../../../domain/supplier/SupplierCuit';
-import { SupplierMail } from '../../../domain/supplier/SupplierMail';
 import { SupplierName } from '../../../domain/supplier/SupplierName';
-import { SupplierPhone } from '../../../domain/supplier/SupplierPhone';
 import { SuppliersRepository } from '../../../domain/supplier/SuppliersRepository';
 import { InRuntimeMemoryInvoicesRepository } from '../../../infrastructure/invoice/InRuntimeMemoryInvoicesRepository';
 import { InMemoryCategoriesRepository } from '../../../infrastructure/product/InMemoryCategoriesRepository';
@@ -85,10 +85,10 @@ test('Given a valid RegisterPurchaseRequestDTO with existing supplier, when purc
     Promise.resolve(
       Supplier.create(
         {
-          cuit: SupplierCuit.create({ value: 'cuit' }),
-          mail: SupplierMail.create({ value: 'correo' }),
+          cuit: Cuit.create({ value: 'cuit' }),
+          mail: Mail.create({ value: 'correo' }),
           name: SupplierName.create({ value: 'nombre' }),
-          phone: SupplierPhone.create({ value: 'celular' }),
+          phone: Phone.create({ value: 'celular' }),
         },
         new UniqueEntityID(request.supplier.id),
       ),

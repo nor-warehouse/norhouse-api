@@ -19,12 +19,13 @@ import { PurchaseProduct } from '../../domain/purchase/product/PurchaseProduct';
 import { PurchaseProductQuantity } from '../../domain/purchase/product/PurchaseProductQuantity';
 import { Purchase } from '../../domain/purchase/Purchase';
 import { PurchasesRepository } from '../../domain/purchase/PurchasesRepository';
+import { PurchaseTotal } from '../../domain/purchase/PurchaseTotal';
+import { Cuit } from '../../domain/shared/Cuit';
+import { Mail } from '../../domain/shared/Mail';
+import { Phone } from '../../domain/shared/Phone';
 import { Supplier } from '../../domain/supplier/Supplier';
-import { SupplierCuit } from '../../domain/supplier/SupplierCuit';
 import { SupplierId } from '../../domain/supplier/SupplierId';
-import { SupplierMail } from '../../domain/supplier/SupplierMail';
 import { SupplierName } from '../../domain/supplier/SupplierName';
-import { SupplierPhone } from '../../domain/supplier/SupplierPhone';
 import { SuppliersRepository } from '../../domain/supplier/SuppliersRepository';
 import {
   RegisterPurchaseRequestDTO,
@@ -32,7 +33,6 @@ import {
   RegisterPurchaseRequestDTOProduct,
   RegisterPurchaseRequestDTOSupplier,
 } from './RegisterPurchaseRequestDTO';
-import { PurchaseTotal } from '../../domain/purchase/PurchaseTotal';
 
 export class RegisterPurchaseUseCase implements UseCase<RegisterPurchaseRequestDTO, Purchase> {
   constructor(
@@ -71,10 +71,10 @@ export class RegisterPurchaseUseCase implements UseCase<RegisterPurchaseRequestD
     } else if (request.new) {
       const { cuit, mail, name, phone } = request.new;
       const supplier = Supplier.create({
-        cuit: SupplierCuit.create({ value: cuit }),
-        mail: SupplierMail.create({ value: mail }),
+        cuit: Cuit.create({ value: cuit }),
+        mail: Mail.create({ value: mail }),
         name: SupplierName.create({ value: name }),
-        phone: SupplierPhone.create({ value: phone }),
+        phone: Phone.create({ value: phone }),
       });
       await this.suppliersRepo.save(supplier);
       return supplier;
@@ -126,7 +126,7 @@ export class RegisterPurchaseUseCase implements UseCase<RegisterPurchaseRequestD
       invoice,
       supplier,
       products,
-      total: PurchaseTotal.create({ value: products })
+      total: PurchaseTotal.create({ value: products }),
     });
 
     await this.purchasesRepo.save(purchase);
