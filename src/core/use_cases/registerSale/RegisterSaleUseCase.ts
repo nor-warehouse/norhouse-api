@@ -9,15 +9,21 @@ import { InvoiceDate } from '../../domain/invoice/InvoiceDate';
 import { InvoiceNumber } from '../../domain/invoice/InvoiceNumber';
 import { InvoicesRepository } from '../../domain/invoice/InvoicesRepository';
 import { InvoiceTypes } from '../../domain/invoice/InvoiceType';
+import { ProductId } from '../../domain/product/ProductId';
+import { ProductPrice } from '../../domain/product/ProductPrice';
+import { ProductsRepository } from '../../domain/product/ProductsRepository';
 import { Sale } from '../../domain/sale/Sale';
 import { SalesRepository } from '../../domain/sale/SalesRepository';
 import { Cuit } from '../../domain/shared/Cuit';
 import { Mail } from '../../domain/shared/Mail';
 import { Phone } from '../../domain/shared/Phone';
+import { TransactionProduct } from '../../domain/TransactionProduct/TransactionProduct';
+import { TransactionProductQuantity } from '../../domain/TransactionProduct/TransactionProductQuantity';
 import {
   RegisterSaleRequestDTO,
   RegisterSaleRequestDTOClient,
   RegisterSaleRequestDTOInvoice,
+  RegisterSaleRequestDTOProduct,
 } from './RegisterSaleRequestDTO';
 
 export class RegisterSaleUseCase implements UseCase<RegisterSaleRequestDTO, Sale> {
@@ -25,12 +31,14 @@ export class RegisterSaleUseCase implements UseCase<RegisterSaleRequestDTO, Sale
     private salesRepo: SalesRepository,
     private clientsRepo: ClientsRepository,
     private invoicesRepo: InvoicesRepository,
+    private productsRepo: ProductsRepository,
   ) {}
 
   async execute(request: RegisterSaleRequestDTO): Promise<Sale> {
     const client = await this.handleRequestClient(request.client);
     const invoice = await this.handleRequestInvoice(request.invoice);
-    const sale = Sale.create({ client, invoice });
+    const products = await Promise.all(request.products.map(async p => await this.handleRequestProduct(p)));
+    const sale = Sale.create({ client, invoice, products });
     await this.salesRepo.save(sale);
     return sale;
   }
@@ -61,5 +69,16 @@ export class RegisterSaleUseCase implements UseCase<RegisterSaleRequestDTO, Sale
     });
     await this.invoicesRepo.save(invoice);
     return invoice;
+  }
+
+  private async handleRequestProduct(request: RegisterSaleRequestDTOProduct): Promise<TransactionProduct> {
+    const productId = ProductId.create(new UniqueEntityID(request.id));
+    const product = await this.productsRepo.findById(productId);
+    return TransactionProduct.create({
+      category: product.category,
+      name: product.name,
+      price: ProductPrice.create({ value: request.price }),
+      quantity: TransactionProductQuantity.create({ value: request.quantity }),
+    });
   }
 }

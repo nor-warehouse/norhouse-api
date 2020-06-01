@@ -2,11 +2,13 @@ import { Entity } from '../../../shared/core/Entity';
 import { UniqueEntityID } from '../../../shared/core/UniqueEntityID';
 import { Client } from '../client/Client';
 import { Invoice } from '../invoice/Invoice';
+import { TransactionProduct } from '../TransactionProduct/TransactionProduct';
 import { SaleId } from './SaleId';
 
 interface SaleProps {
   client: Client;
   invoice: Invoice;
+  products: TransactionProduct[]
 }
 
 export class Sale extends Entity<SaleProps> {
@@ -28,5 +30,9 @@ export class Sale extends Entity<SaleProps> {
 
   get invoice(): Invoice {
     return this.props.invoice;
+  }
+
+  get products(): TransactionProduct[] {
+    return this.props.products;
   }
 }
