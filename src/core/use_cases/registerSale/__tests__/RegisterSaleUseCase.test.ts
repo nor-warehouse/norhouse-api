@@ -23,7 +23,11 @@ import { InMemoryClientsRepository } from '../../../infrastructure/client/InMemo
 import { InRuntimeMemoryInvoicesRepository } from '../../../infrastructure/invoice/InRuntimeMemoryInvoicesRepository';
 import { InMemoryProductsRepository } from '../../../infrastructure/product/InMemoryProductsRepository';
 import { InMemorySalesRepository } from '../../../infrastructure/sale/InMemorySalesRepository';
-import { RegisterSaleRequestDTO, RegisterSaleRequestDTOClient } from '../RegisterSaleRequestDTO';
+import {
+  RegisterSaleRequestDTO,
+  RegisterSaleRequestDTOClient,
+  RegisterSaleRequestDTOProduct,
+} from '../RegisterSaleRequestDTO';
 import { RegisterSaleUseCase } from '../RegisterSaleUseCase';
 
 const rawFakeClient: RegisterSaleRequestDTOClient['new'] = {
@@ -83,22 +87,24 @@ beforeEach(() => {
   clientsRepo = new InMemoryClientsRepository();
   invoicesRepo = new InRuntimeMemoryInvoicesRepository();
   productsRepo = new InMemoryProductsRepository();
-  productsRepo.findById = jest.fn().mockImplementationOnce(id => Promise.resolve(createFakeProduct(id)));
   registerSale = new RegisterSaleUseCase(salesRepo, clientsRepo, invoicesRepo, productsRepo);
 });
 
 test('Given a RegisterSaleRequestDTO, when sale is registered, then should create a Sale', async () => {
+  productsRepo.findById = jest.fn().mockImplementationOnce(id => Promise.resolve(createFakeProduct(id)));
   const sale = await registerSale.execute(request);
   expect(sale).toBeInstanceOf(Sale);
 });
 
 test('Given a RegisterSaleRequestDTO, when sale is registered, then created Sale should have a SaleId', async () => {
+  productsRepo.findById = jest.fn().mockImplementationOnce(id => Promise.resolve(createFakeProduct(id)));
   const sale = await registerSale.execute(request);
   expect(sale.saleId).toBeDefined();
   expect(sale.saleId).toBeInstanceOf(SaleId);
 });
 
 test('Given a RegisterSaleRequestDTO, when sale is registered, then created Sale should be persisted', async () => {
+  productsRepo.findById = jest.fn().mockImplementationOnce(id => Promise.resolve(createFakeProduct(id)));
   const sale = await registerSale.execute(request);
   const persistedSale = await salesRepo.findById(sale.saleId);
   expect(persistedSale).toBeInstanceOf(Sale);
@@ -106,6 +112,7 @@ test('Given a RegisterSaleRequestDTO, when sale is registered, then created Sale
 });
 
 test('Given a RegisterSaleRequestDTO with client id, when sale is registered, then created Sale should have a Client', async () => {
+  productsRepo.findById = jest.fn().mockImplementationOnce(id => Promise.resolve(createFakeProduct(id)));
   clientsRepo.findById = jest.fn().mockImplementationOnce(() => Promise.resolve(createFakeClient(request.client.id)));
   const sale = await registerSale.execute(request);
   expect(sale.client).toBeDefined();
@@ -113,6 +120,7 @@ test('Given a RegisterSaleRequestDTO with client id, when sale is registered, th
 });
 
 test('Given a RegisterSaleRequestDTO with new client, when sale is registered, then created Sale should have a Client', async () => {
+  productsRepo.findById = jest.fn().mockImplementationOnce(id => Promise.resolve(createFakeProduct(id)));
   enhanceRequest({ client: { new: rawFakeClient } as RegisterSaleRequestDTOClient });
   const sale = await registerSale.execute(request);
   expect(sale.client).toBeDefined();
@@ -120,6 +128,7 @@ test('Given a RegisterSaleRequestDTO with new client, when sale is registered, t
 });
 
 test('Given a RegisterSaleRequestDTO with new client, when sale is registered, then created Client should be persisted', async () => {
+  productsRepo.findById = jest.fn().mockImplementationOnce(id => Promise.resolve(createFakeProduct(id)));
   enhanceRequest({ client: { new: rawFakeClient } as RegisterSaleRequestDTOClient });
   const sale = await registerSale.execute(request);
   const persistedClient = await clientsRepo.findById(sale.client.clientId);
@@ -127,6 +136,7 @@ test('Given a RegisterSaleRequestDTO with new client, when sale is registered, t
 });
 
 test('Given a RegisterSaleRequestDTO, when sale is registered, then created Sale should have a sale type Invoice', async () => {
+  productsRepo.findById = jest.fn().mockImplementationOnce(id => Promise.resolve(createFakeProduct(id)));
   const sale = await registerSale.execute(request);
   expect(sale.invoice).toBeDefined();
   expect(sale.invoice).toBeInstanceOf(Invoice);
@@ -134,16 +144,29 @@ test('Given a RegisterSaleRequestDTO, when sale is registered, then created Sale
 });
 
 test('Given a RegisterSaleRequestDTO, when sale is registered, then created Invoice should be persisted', async () => {
+  productsRepo.findById = jest.fn().mockImplementationOnce(id => Promise.resolve(createFakeProduct(id)));
   const sale = await registerSale.execute(request);
   const persistedInvoice = await invoicesRepo.findById(sale.invoice.invoiceId);
   expect(persistedInvoice).toBeInstanceOf(Invoice);
 });
 
 test('Given a RegisterSaleRequestDTO, when sale is registered, then created Sale should have a list of TransactionProducts', async () => {
+  productsRepo.findById = jest.fn().mockImplementationOnce(id => Promise.resolve(createFakeProduct(id)));
   const sale = await registerSale.execute(request);
   expect(sale.products).toHaveLength(1);
   sale.products.forEach(product => {
     expect(product).toBeDefined();
     expect(product).toBeInstanceOf(TransactionProduct);
   });
+});
+
+test('Given a RegisterSaleRequestDTO, when sale is registered, then its TransactionProducts should update stock', async () => {
+  const product = createFakeProduct();
+  await productsRepo.save(product);
+  enhanceRequest({
+    products: [{ id: product.productId.id.toString(), price: 200, quantity: 2 }] as RegisterSaleRequestDTOProduct[],
+  });
+  await registerSale.execute(request);
+  const persistedProduct = await productsRepo.findById(product.productId);
+  expect(persistedProduct.stock.value).toEqual(3);
 });

@@ -46,4 +46,9 @@ export class Product extends Entity<ProductProps> {
     const updatedStock = this.stock.add(value);
     this.props.stock = updatedStock;
   }
+
+  public substractStock(value: number): void {
+    const updatedStock = this.stock.substract(value);
+    this.props.stock = updatedStock;
+  }
 }

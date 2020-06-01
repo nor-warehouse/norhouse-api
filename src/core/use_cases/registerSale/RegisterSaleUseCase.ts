@@ -74,6 +74,8 @@ export class RegisterSaleUseCase implements UseCase<RegisterSaleRequestDTO, Sale
   private async handleRequestProduct(request: RegisterSaleRequestDTOProduct): Promise<TransactionProduct> {
     const productId = ProductId.create(new UniqueEntityID(request.id));
     const product = await this.productsRepo.findById(productId);
+    product.substractStock(request.quantity);
+    await this.productsRepo.save(product);
     return TransactionProduct.create({
       category: product.category,
       name: product.name,

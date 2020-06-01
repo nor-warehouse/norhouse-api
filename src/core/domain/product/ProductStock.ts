@@ -20,4 +20,8 @@ export class ProductStock extends ValueObject<ProductStockProps> {
   public add(value: number): ProductStock {
     return ProductStock.create({ value: this.value + value });
   }
+
+  public substract(value: number): ProductStock {
+    return ProductStock.create({ value: this.value - value });
+  }
 }
