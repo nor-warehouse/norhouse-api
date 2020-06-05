@@ -1,8 +1,8 @@
-import { InRuntimeMemoryInvoicesRepository } from '../../infrastructure/invoice/InRuntimeMemoryInvoicesRepository';
-import { InMemoryCategoriesRepository } from '../../infrastructure/product/InMemoryCategoriesRepository';
-import { InMemoryProductsRepository } from '../../infrastructure/product/InMemoryProductsRepository';
-import { InMemoryPurchasesRepository } from '../../infrastructure/purchase/InMemoryPurchasesRepository';
-import { InRuntimeMemorySuppliersRepository } from '../../infrastructure/supplier/InRuntimeMemorySuppliersRepository';
+import { InMemoryCategoriesRepository } from '../../../infrastructure/persistence/inMemory/Categories/InMemoryCategoriesRepository';
+import { InRuntimeMemoryInvoicesRepository } from '../../../infrastructure/persistence/inMemory/Invoices/InRuntimeMemoryInvoicesRepository';
+import { InMemoryProductsRepository } from '../../../infrastructure/persistence/inMemory/Products/InMemoryProductsRepository';
+import { InMemoryPurchasesRepository } from '../../../infrastructure/persistence/inMemory/Purchases/InMemoryPurchasesRepository';
+import { InRuntimeMemorySuppliersRepository } from '../../../infrastructure/persistence/inMemory/Suppliers/InRuntimeMemorySuppliersRepository';
 import { RegisterPurchaseController } from './RegisterPurchaseController';
 import { RegisterPurchaseUseCase } from './RegisterPurchaseUseCase';
 

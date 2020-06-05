@@ -1,6 +1,6 @@
-import { Client } from '../../domain/client/Client';
-import { ClientId } from '../../domain/client/ClientId';
-import { ClientsRepository } from '../../domain/client/ClientsRepository';
+import { Client } from '../../../../core/domain/client/Client';
+import { ClientId } from '../../../../core/domain/client/ClientId';
+import { ClientsRepository } from '../../../../core/domain/client/ClientsRepository';
 
 export class InMemoryClientsRepository implements ClientsRepository {
   private clients: Client[] = [];

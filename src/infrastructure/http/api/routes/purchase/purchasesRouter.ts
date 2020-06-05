@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { registerPurchaseController } from '../../use_cases/registerPurchase';
+import { registerPurchaseController } from '../../../../../core/use_cases/registerPurchase';
 
 const purchasesRouter = Router();
 

@@ -1,3 +1,7 @@
+import { InMemoryClientsRepository } from '../../../../infrastructure/persistence/inMemory/Clients/InMemoryClientsRepository';
+import { InRuntimeMemoryInvoicesRepository } from '../../../../infrastructure/persistence/inMemory/Invoices/InRuntimeMemoryInvoicesRepository';
+import { InMemoryProductsRepository } from '../../../../infrastructure/persistence/inMemory/Products/InMemoryProductsRepository';
+import { InMemorySalesRepository } from '../../../../infrastructure/persistence/inMemory/Sales/InMemorySalesRepository';
 import { UniqueEntityID } from '../../../../shared/core/UniqueEntityID';
 import { Client } from '../../../domain/client/Client';
 import { ClientName } from '../../../domain/client/ClientName';
@@ -19,10 +23,6 @@ import { Cuit } from '../../../domain/shared/Cuit';
 import { Mail } from '../../../domain/shared/Mail';
 import { Phone } from '../../../domain/shared/Phone';
 import { TransactionProduct } from '../../../domain/TransactionProduct/TransactionProduct';
-import { InMemoryClientsRepository } from '../../../infrastructure/client/InMemoryClientsRepository';
-import { InRuntimeMemoryInvoicesRepository } from '../../../infrastructure/invoice/InRuntimeMemoryInvoicesRepository';
-import { InMemoryProductsRepository } from '../../../infrastructure/product/InMemoryProductsRepository';
-import { InMemorySalesRepository } from '../../../infrastructure/sale/InMemorySalesRepository';
 import {
   RegisterSaleRequestDTO,
   RegisterSaleRequestDTOClient,

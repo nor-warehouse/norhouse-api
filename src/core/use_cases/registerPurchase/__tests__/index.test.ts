@@ -1,4 +1,9 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
+import { InMemoryCategoriesRepository } from '../../../../infrastructure/persistence/inMemory/Categories/InMemoryCategoriesRepository';
+import { InRuntimeMemoryInvoicesRepository } from '../../../../infrastructure/persistence/inMemory/Invoices/InRuntimeMemoryInvoicesRepository';
+import { InMemoryProductsRepository } from '../../../../infrastructure/persistence/inMemory/Products/InMemoryProductsRepository';
+import { InMemoryPurchasesRepository } from '../../../../infrastructure/persistence/inMemory/Purchases/InMemoryPurchasesRepository';
+import { InRuntimeMemorySuppliersRepository } from '../../../../infrastructure/persistence/inMemory/Suppliers/InRuntimeMemorySuppliersRepository';
 import { UniqueEntityID } from '../../../../shared/core/UniqueEntityID';
 import { Invoice } from '../../../domain/invoice/Invoice';
 import { InvoiceNumber } from '../../../domain/invoice/InvoiceNumber';
@@ -21,11 +26,6 @@ import { Supplier } from '../../../domain/supplier/Supplier';
 import { SupplierName } from '../../../domain/supplier/SupplierName';
 import { SuppliersRepository } from '../../../domain/supplier/SuppliersRepository';
 import { TransactionProduct } from '../../../domain/TransactionProduct/TransactionProduct';
-import { InRuntimeMemoryInvoicesRepository } from '../../../infrastructure/invoice/InRuntimeMemoryInvoicesRepository';
-import { InMemoryCategoriesRepository } from '../../../infrastructure/product/InMemoryCategoriesRepository';
-import { InMemoryProductsRepository } from '../../../infrastructure/product/InMemoryProductsRepository';
-import { InMemoryPurchasesRepository } from '../../../infrastructure/purchase/InMemoryPurchasesRepository';
-import { InRuntimeMemorySuppliersRepository } from '../../../infrastructure/supplier/InRuntimeMemorySuppliersRepository';
 import { RegisterPurchaseRequestDTO } from '../RegisterPurchaseRequestDTO';
 import { RegisterPurchaseUseCase } from '../RegisterPurchaseUseCase';
 

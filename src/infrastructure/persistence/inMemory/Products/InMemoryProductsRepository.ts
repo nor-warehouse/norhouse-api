@@ -1,6 +1,6 @@
-import { Product } from '../../domain/product/Product';
-import { ProductId } from '../../domain/product/ProductId';
-import { ProductsRepository } from '../../domain/product/ProductsRepository';
+import { Product } from '../../../../core/domain/product/Product';
+import { ProductId } from '../../../../core/domain/product/ProductId';
+import { ProductsRepository } from '../../../../core/domain/product/ProductsRepository';
 
 export class InMemoryProductsRepository implements ProductsRepository {
   private products: Product[] = [];
