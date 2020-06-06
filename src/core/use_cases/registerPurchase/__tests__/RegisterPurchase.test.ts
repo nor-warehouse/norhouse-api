@@ -27,7 +27,7 @@ import { SupplierName } from '../../../domain/supplier/SupplierName';
 import { SuppliersRepository } from '../../../domain/supplier/SuppliersRepository';
 import { TransactionProduct } from '../../../domain/TransactionProduct/TransactionProduct';
 import { RegisterPurchaseRequestDTO } from '../RegisterPurchaseRequestDTO';
-import { RegisterPurchaseUseCase } from '../RegisterPurchaseUseCase';
+import { RegisterPurchase } from '../RegisterPurchase';
 
 let request: RegisterPurchaseRequestDTO;
 let purchase: Purchase;
@@ -38,7 +38,7 @@ let categoriesRepo: CategoriesRepository = new InMemoryCategoriesRepository();
 let productsRepo: ProductsRepository = new InMemoryProductsRepository();
 let purchasesRepo: PurchasesRepository = new InMemoryPurchasesRepository();
 
-let registerPurchase = new RegisterPurchaseUseCase(
+let registerPurchase = new RegisterPurchase(
   invoicesRepo,
   suppliersRepo,
   categoriesRepo,
@@ -287,7 +287,7 @@ function cleanUp(): void {
   categoriesRepo = new InMemoryCategoriesRepository();
   productsRepo = new InMemoryProductsRepository();
   purchasesRepo = new InMemoryPurchasesRepository();
-  registerPurchase = new RegisterPurchaseUseCase(
+  registerPurchase = new RegisterPurchase(
     invoicesRepo,
     suppliersRepo,
     categoriesRepo,

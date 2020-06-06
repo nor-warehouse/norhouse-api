@@ -26,7 +26,7 @@ import {
   RegisterSaleRequestDTOProduct,
 } from './RegisterSaleRequestDTO';
 
-export class RegisterSaleUseCase implements UseCase<RegisterSaleRequestDTO, Sale> {
+export class RegisterSale implements UseCase<RegisterSaleRequestDTO, Sale> {
   constructor(
     private salesRepo: SalesRepository,
     private clientsRepo: ClientsRepository,

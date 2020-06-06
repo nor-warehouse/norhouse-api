@@ -23,12 +23,12 @@ import { Cuit } from '../../../domain/shared/Cuit';
 import { Mail } from '../../../domain/shared/Mail';
 import { Phone } from '../../../domain/shared/Phone';
 import { TransactionProduct } from '../../../domain/TransactionProduct/TransactionProduct';
+import { RegisterSale } from '../RegisterSale';
 import {
   RegisterSaleRequestDTO,
   RegisterSaleRequestDTOClient,
   RegisterSaleRequestDTOProduct,
 } from '../RegisterSaleRequestDTO';
-import { RegisterSaleUseCase } from '../RegisterSaleUseCase';
 
 const rawFakeClient: RegisterSaleRequestDTOClient['new'] = {
   cuit: 'some-cuit',
@@ -80,14 +80,14 @@ let salesRepo: SalesRepository = new InMemorySalesRepository();
 let clientsRepo: ClientsRepository = new InMemoryClientsRepository();
 let invoicesRepo: InvoicesRepository = new InRuntimeMemoryInvoicesRepository();
 let productsRepo: ProductsRepository = new InMemoryProductsRepository();
-let registerSale = new RegisterSaleUseCase(salesRepo, clientsRepo, invoicesRepo, productsRepo);
+let registerSale = new RegisterSale(salesRepo, clientsRepo, invoicesRepo, productsRepo);
 
 beforeEach(() => {
   salesRepo = new InMemorySalesRepository();
   clientsRepo = new InMemoryClientsRepository();
   invoicesRepo = new InRuntimeMemoryInvoicesRepository();
   productsRepo = new InMemoryProductsRepository();
-  registerSale = new RegisterSaleUseCase(salesRepo, clientsRepo, invoicesRepo, productsRepo);
+  registerSale = new RegisterSale(salesRepo, clientsRepo, invoicesRepo, productsRepo);
 });
 
 test('Given a RegisterSaleRequestDTO, when sale is registered, then should create a Sale', async () => {

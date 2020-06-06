@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import { BaseController } from '../../../shared/infrastructure/BaseController';
-import { PurchaseDTO } from '../../domain/purchase/PurchaseDTO';
-import { PurchaseMapper } from '../../domain/purchase/PurchaseMapper';
-import { RegisterPurchaseRequestDTO } from './RegisterPurchaseRequestDTO';
-import { RegisterPurchaseUseCase } from './RegisterPurchaseUseCase';
+import { BaseController } from '../../../../../../shared/infrastructure/BaseController';
+import { PurchaseDTO } from '../../../../../../core/domain/purchase/PurchaseDTO';
+import { PurchaseMapper } from '../../../../../../core/domain/purchase/PurchaseMapper';
+import { RegisterPurchaseRequestDTO } from '../../../../../../core/use_cases/registerPurchase/RegisterPurchaseRequestDTO';
+import { RegisterPurchase } from '../../../../../../core/use_cases/registerPurchase/RegisterPurchase';
 
 export class RegisterPurchaseController extends BaseController {
-  constructor(private useCase: RegisterPurchaseUseCase) {
+  constructor(private useCase: RegisterPurchase) {
     super();
   }
 
