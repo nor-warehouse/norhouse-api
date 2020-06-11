@@ -1,4 +1,5 @@
 import { ValueObject } from '../../../shared/core/ValueObject';
+import * as InvoiceDateErrors from './errors/InvoiceDateErrors';
 
 interface InvoiceDateProps {
   value: Date;
@@ -10,6 +11,9 @@ export class InvoiceDate extends ValueObject<InvoiceDateProps> {
   }
 
   public static create(props: InvoiceDateProps): InvoiceDate {
+    if (!(props.value instanceof Date)) {
+      throw InvoiceDateErrors.InvalidDateError;
+    }
     return new InvoiceDate(props);
   }
 

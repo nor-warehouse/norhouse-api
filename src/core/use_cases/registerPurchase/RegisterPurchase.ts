@@ -1,8 +1,7 @@
 import { UseCase } from '../../../shared/application/UseCase';
 import { UniqueEntityID } from '../../../shared/core/UniqueEntityID';
 import { Invoice } from '../../domain/invoice/Invoice';
-import { InvoiceDate } from '../../domain/invoice/InvoiceDate';
-import { InvoiceNumber } from '../../domain/invoice/InvoiceNumber';
+import { InvoiceFactory } from '../../domain/invoice/InvoiceFactory';
 import { InvoicesRepository } from '../../domain/invoice/InvoicesRepository';
 import { InvoiceTypes } from '../../domain/invoice/InvoiceType';
 import { CategoriesRepository } from '../../domain/product/category/CategoriesRepository';
@@ -35,6 +34,8 @@ import {
 } from './RegisterPurchaseRequestDTO';
 
 export class RegisterPurchase implements UseCase<RegisterPurchaseRequestDTO, Purchase> {
+  private invoiceFactory = new InvoiceFactory();
+
   constructor(
     private invoicesRepo: InvoicesRepository,
     private suppliersRepo: SuppliersRepository,
@@ -54,11 +55,7 @@ export class RegisterPurchase implements UseCase<RegisterPurchaseRequestDTO, Pur
 
   private async handleRequestInvoice(request: RegisterPurchaseRequestDTOInvoice): Promise<Invoice> {
     const { date, number } = request;
-    const invoice = Invoice.create({
-      date: InvoiceDate.create({ value: date }),
-      number: InvoiceNumber.create({ value: number }),
-      type: InvoiceTypes.purchase,
-    });
+    const invoice = this.invoiceFactory.create({ date, number, type: InvoiceTypes.purchase });
     await this.invoicesRepo.save(invoice);
     return invoice;
   }

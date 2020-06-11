@@ -5,8 +5,7 @@ import { ClientId } from '../../domain/client/ClientId';
 import { ClientName } from '../../domain/client/ClientName';
 import { ClientsRepository } from '../../domain/client/ClientsRepository';
 import { Invoice } from '../../domain/invoice/Invoice';
-import { InvoiceDate } from '../../domain/invoice/InvoiceDate';
-import { InvoiceNumber } from '../../domain/invoice/InvoiceNumber';
+import { InvoiceFactory } from '../../domain/invoice/InvoiceFactory';
 import { InvoicesRepository } from '../../domain/invoice/InvoicesRepository';
 import { InvoiceTypes } from '../../domain/invoice/InvoiceType';
 import { ProductId } from '../../domain/product/ProductId';
@@ -27,6 +26,8 @@ import {
 } from './RegisterSaleRequestDTO';
 
 export class RegisterSale implements UseCase<RegisterSaleRequestDTO, Sale> {
+  private invoiceFactory = new InvoiceFactory();
+
   constructor(
     private salesRepo: SalesRepository,
     private clientsRepo: ClientsRepository,
@@ -62,11 +63,7 @@ export class RegisterSale implements UseCase<RegisterSaleRequestDTO, Sale> {
 
   private async handleRequestInvoice(request: RegisterSaleRequestDTOInvoice): Promise<Invoice> {
     const { date, number } = request;
-    const invoice = Invoice.create({
-      date: InvoiceDate.create({ value: date }),
-      number: InvoiceNumber.create({ value: number }),
-      type: InvoiceTypes.sale,
-    });
+    const invoice = this.invoiceFactory.create({ date, number, type: InvoiceTypes.sale });
     await this.invoicesRepo.save(invoice);
     return invoice;
   }

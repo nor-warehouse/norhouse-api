@@ -26,8 +26,8 @@ import { Supplier } from '../../../domain/supplier/Supplier';
 import { SupplierName } from '../../../domain/supplier/SupplierName';
 import { SuppliersRepository } from '../../../domain/supplier/SuppliersRepository';
 import { TransactionProduct } from '../../../domain/TransactionProduct/TransactionProduct';
-import { RegisterPurchaseRequestDTO } from '../RegisterPurchaseRequestDTO';
 import { RegisterPurchase } from '../RegisterPurchase';
+import { RegisterPurchaseRequestDTO } from '../RegisterPurchaseRequestDTO';
 
 let request: RegisterPurchaseRequestDTO;
 let purchase: Purchase;
@@ -38,13 +38,7 @@ let categoriesRepo: CategoriesRepository = new InMemoryCategoriesRepository();
 let productsRepo: ProductsRepository = new InMemoryProductsRepository();
 let purchasesRepo: PurchasesRepository = new InMemoryPurchasesRepository();
 
-let registerPurchase = new RegisterPurchase(
-  invoicesRepo,
-  suppliersRepo,
-  categoriesRepo,
-  productsRepo,
-  purchasesRepo,
-);
+let registerPurchase = new RegisterPurchase(invoicesRepo, suppliersRepo, categoriesRepo, productsRepo, purchasesRepo);
 
 beforeEach(() => cleanUp());
 
@@ -287,13 +281,7 @@ function cleanUp(): void {
   categoriesRepo = new InMemoryCategoriesRepository();
   productsRepo = new InMemoryProductsRepository();
   purchasesRepo = new InMemoryPurchasesRepository();
-  registerPurchase = new RegisterPurchase(
-    invoicesRepo,
-    suppliersRepo,
-    categoriesRepo,
-    productsRepo,
-    purchasesRepo,
-  );
+  registerPurchase = new RegisterPurchase(invoicesRepo, suppliersRepo, categoriesRepo, productsRepo, purchasesRepo);
 }
 
 function createCategory(id): Category {
