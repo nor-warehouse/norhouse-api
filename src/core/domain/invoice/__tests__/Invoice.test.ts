@@ -42,3 +42,13 @@ test('Given invalid date, when Invoice is created, then should throw an error', 
     });
   expect(createInvoice).toThrow();
 });
+
+test('Given invalid number, when Invoice is created, then should not create the Invoice', () => {
+  const createInvoice = (): Invoice =>
+    Invoice.create({
+      date: InvoiceDate.create({ value: new Date() }),
+      number: InvoiceNumber.create({ value: '' }),
+      type: 'sale',
+    });
+  expect(createInvoice).toThrow();
+});
