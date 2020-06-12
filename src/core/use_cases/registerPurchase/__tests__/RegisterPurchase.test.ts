@@ -47,19 +47,10 @@ test('Given a valid RegisterPurchaseRequestDTO, when purchase is registered, the
   expect(whenPurchaseIsRegisteredWithProducts).not.toThrow();
 });
 
-test('Given a valid RegisterPurchaseRequestDTO, when purchase is registered, then should have a PurchaseInvoice', async () => {
+test('Given a valid RegisterPurchaseRequestDTO, when purchase is registered, then Purhcase should have Invoice type purchase', async () => {
   givenARegisterPurchaseRequest();
   await whenPurchaseIsRegisteredWithProducts();
-  expect(purchase).toHaveProperty('invoice');
-  expect(purchase.invoice).toBeInstanceOf(Invoice);
-  expect(purchase.invoice).toHaveProperty('invoiceId');
-  expect(purchase.invoice.invoiceId.id.toValue()).not.toBeFalsy();
-  expect(purchase.invoice).toHaveProperty('type');
   expect(purchase.invoice.type).toEqual(InvoiceTypes.purchase);
-  expect(purchase.invoice).toHaveProperty('date');
-  expect(purchase.invoice.date.value).toEqual(request.invoice.date);
-  expect(purchase.invoice).toHaveProperty('number');
-  expect(purchase.invoice.number.value).toEqual(request.invoice.number);
 });
 
 test('Given a valid RegisterPurchaseRequestDTO, when purchase is registered, then an Invoice should be saved', async () => {
