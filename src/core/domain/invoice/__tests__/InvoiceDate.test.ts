@@ -3,7 +3,8 @@ import { InvoiceDate } from '../InvoiceDate';
 
 test('Given invalid date, when InvoiceDate is created, then should throw InvalidDateError', () => {
   try {
-    InvoiceDate.create({ value: ('' as unknown) as Date });
+    const invoiceDate = InvoiceDate.create({ value: ('' as unknown) as Date });
+    expect(invoiceDate).toBeUndefined();
   } catch (error) {
     expect(error).toEqual(InvoiceErrors.InvalidDateError);
   }
