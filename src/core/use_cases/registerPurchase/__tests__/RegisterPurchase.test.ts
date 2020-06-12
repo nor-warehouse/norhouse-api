@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { InMemoryCategoriesRepository } from '../../../../infrastructure/persistence/inMemory/Categories/InMemoryCategoriesRepository';
-import { InRuntimeMemoryInvoicesRepository } from '../../../../infrastructure/persistence/inMemory/Invoices/InRuntimeMemoryInvoicesRepository';
+import { InMemoryInvoicesRepository } from '../../../../infrastructure/persistence/inMemory/Invoices/InMemoryInvoicesRepository';
 import { InMemoryProductsRepository } from '../../../../infrastructure/persistence/inMemory/Products/InMemoryProductsRepository';
 import { InMemoryPurchasesRepository } from '../../../../infrastructure/persistence/inMemory/Purchases/InMemoryPurchasesRepository';
-import { InRuntimeMemorySuppliersRepository } from '../../../../infrastructure/persistence/inMemory/Suppliers/InRuntimeMemorySuppliersRepository';
+import { InMemorySuppliersRepository } from '../../../../infrastructure/persistence/inMemory/Suppliers/InMemorySuppliersRepository';
 import { UniqueEntityID } from '../../../../shared/core/UniqueEntityID';
 import { Invoice } from '../../../domain/invoice/Invoice';
 import { InvoiceNumber } from '../../../domain/invoice/InvoiceNumber';
@@ -32,8 +32,8 @@ import { RegisterPurchaseRequestDTO } from '../RegisterPurchaseRequestDTO';
 let request: RegisterPurchaseRequestDTO;
 let purchase: Purchase;
 
-const invoicesRepo: InvoicesRepository = new InRuntimeMemoryInvoicesRepository();
-let suppliersRepo: SuppliersRepository = new InRuntimeMemorySuppliersRepository();
+const invoicesRepo: InvoicesRepository = new InMemoryInvoicesRepository();
+let suppliersRepo: SuppliersRepository = new InMemorySuppliersRepository();
 let categoriesRepo: CategoriesRepository = new InMemoryCategoriesRepository();
 let productsRepo: ProductsRepository = new InMemoryProductsRepository();
 let purchasesRepo: PurchasesRepository = new InMemoryPurchasesRepository();
@@ -268,7 +268,7 @@ async function whenPurchaseIsRegisteredWithProducts(): Promise<void> {
 function cleanUp(): void {
   request = undefined;
   purchase = undefined;
-  suppliersRepo = new InRuntimeMemorySuppliersRepository();
+  suppliersRepo = new InMemorySuppliersRepository();
   categoriesRepo = new InMemoryCategoriesRepository();
   productsRepo = new InMemoryProductsRepository();
   purchasesRepo = new InMemoryPurchasesRepository();

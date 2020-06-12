@@ -1,5 +1,5 @@
 import { InMemoryClientsRepository } from '../../../../infrastructure/persistence/inMemory/Clients/InMemoryClientsRepository';
-import { InRuntimeMemoryInvoicesRepository } from '../../../../infrastructure/persistence/inMemory/Invoices/InRuntimeMemoryInvoicesRepository';
+import { InMemoryInvoicesRepository } from '../../../../infrastructure/persistence/inMemory/Invoices/InMemoryInvoicesRepository';
 import { InMemoryProductsRepository } from '../../../../infrastructure/persistence/inMemory/Products/InMemoryProductsRepository';
 import { InMemorySalesRepository } from '../../../../infrastructure/persistence/inMemory/Sales/InMemorySalesRepository';
 import { UniqueEntityID } from '../../../../shared/core/UniqueEntityID';
@@ -78,14 +78,14 @@ function enhanceRequest(props: object): void {
 
 let salesRepo: SalesRepository = new InMemorySalesRepository();
 let clientsRepo: ClientsRepository = new InMemoryClientsRepository();
-let invoicesRepo: InvoicesRepository = new InRuntimeMemoryInvoicesRepository();
+let invoicesRepo: InvoicesRepository = new InMemoryInvoicesRepository();
 let productsRepo: ProductsRepository = new InMemoryProductsRepository();
 let registerSale = new RegisterSale(salesRepo, clientsRepo, invoicesRepo, productsRepo);
 
 beforeEach(() => {
   salesRepo = new InMemorySalesRepository();
   clientsRepo = new InMemoryClientsRepository();
-  invoicesRepo = new InRuntimeMemoryInvoicesRepository();
+  invoicesRepo = new InMemoryInvoicesRepository();
   productsRepo = new InMemoryProductsRepository();
   registerSale = new RegisterSale(salesRepo, clientsRepo, invoicesRepo, productsRepo);
 });

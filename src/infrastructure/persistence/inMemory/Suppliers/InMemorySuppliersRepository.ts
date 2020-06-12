@@ -2,7 +2,7 @@ import { Supplier } from '../../../../core/domain/supplier/Supplier';
 import { SupplierId } from '../../../../core/domain/supplier/SupplierId';
 import { SuppliersRepository } from '../../../../core/domain/supplier/SuppliersRepository';
 
-export class InRuntimeMemorySuppliersRepository implements SuppliersRepository {
+export class InMemorySuppliersRepository implements SuppliersRepository {
   private suppliers: Supplier[] = [];
 
   findById(supplierId: SupplierId): Promise<Supplier | undefined> {

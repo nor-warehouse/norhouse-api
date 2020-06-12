@@ -3,7 +3,7 @@ import { InvoiceId } from '../../../../core/domain/invoice/InvoiceId';
 import { InvoiceNumber } from '../../../../core/domain/invoice/InvoiceNumber';
 import { InvoicesRepository } from '../../../../core/domain/invoice/InvoicesRepository';
 
-export class InRuntimeMemoryInvoicesRepository implements InvoicesRepository {
+export class InMemoryInvoicesRepository implements InvoicesRepository {
   private invoices: Invoice[] = [];
 
   findById(id: InvoiceId): Promise<Invoice | undefined> {
