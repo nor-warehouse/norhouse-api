@@ -1,9 +1,16 @@
 import { Product } from '../../../../core/domain/product/Product';
 import { ProductId } from '../../../../core/domain/product/ProductId';
-import { ProductsRepository } from '../../../../core/domain/product/ProductsRepository';
+import { ProductList, ProductsRepository } from '../../../../core/domain/product/ProductsRepository';
 
 export class InMemoryProductsRepository implements ProductsRepository {
   private products: Product[] = [];
+
+  findAll(): Promise<ProductList> {
+    return Promise.resolve({
+      products: this.products,
+      count: this.products.length,
+    });
+  }
 
   findById(id: ProductId): Promise<Product | undefined> {
     const product = this.products.find(p => p.productId.equals(id));
