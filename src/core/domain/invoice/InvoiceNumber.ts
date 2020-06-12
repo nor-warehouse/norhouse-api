@@ -2,7 +2,7 @@ import { ValueObject } from '../../../shared/core/ValueObject';
 import * as InvoiceErrors from './errors/InvoiceErrors';
 
 interface InvoiceNumberProps {
-  value: string;
+  value: string | number;
 }
 
 export class InvoiceNumber extends ValueObject<InvoiceNumberProps> {
@@ -10,15 +10,15 @@ export class InvoiceNumber extends ValueObject<InvoiceNumberProps> {
     super(props);
   }
 
-  public static create(props: InvoiceNumberProps): InvoiceNumber {
-    if (!props.value) {
-      throw InvoiceErrors.InvalidNumberError;
-    }
+  public static create({ value }: InvoiceNumberProps): InvoiceNumber {
+    const trimmedValue = `${value}`.trim();
 
-    return new InvoiceNumber(props);
+    if (!trimmedValue) throw InvoiceErrors.InvalidNumberError;
+
+    return new InvoiceNumber({ value: trimmedValue });
   }
 
   get value(): string {
-    return this.props.value;
+    return this.props.value as string;
   }
 }
