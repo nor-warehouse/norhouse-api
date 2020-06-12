@@ -6,7 +6,7 @@ import { InvoiceType } from './InvoiceType';
 
 interface RawInvoice {
   date: Date;
-  number: string;
+  number: string | number;
   type: InvoiceType;
 }
 
