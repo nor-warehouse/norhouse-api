@@ -1,5 +1,5 @@
 import { UseCase } from '../../../shared/application/models/UseCase';
-import { ProductList, ProductsRepository } from '../../domain/product/ProductsRepository';
+import { ProductList, ProductsRepository } from '../../domain/Product/ProductsRepository';
 import { GetAllProductsRequestDTO } from './GetAllProductsRequestDTO';
 
 export class GetAllProducts implements UseCase<GetAllProductsRequestDTO, ProductList> {

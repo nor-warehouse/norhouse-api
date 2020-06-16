@@ -1,6 +1,6 @@
-import { Product } from '../../../../core/domain/product/Product';
-import { ProductId } from '../../../../core/domain/product/ProductId';
-import { ProductList, ProductsRepository } from '../../../../core/domain/product/ProductsRepository';
+import { Product } from '../../../../core/domain/Product/Product';
+import { ProductId } from '../../../../core/domain/Product/ProductId';
+import { ProductList, ProductsRepository } from '../../../../core/domain/Product/ProductsRepository';
 import { Pagination } from '../../../../core/domain/shared/Pagination';
 
 export class InMemoryProductsRepository implements ProductsRepository {

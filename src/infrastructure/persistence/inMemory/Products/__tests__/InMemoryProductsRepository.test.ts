@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { Product } from '../../../../../core/domain/product/Product';
-import { ProductFactory } from '../../../../../core/domain/product/ProductFactory';
-import { ProductId } from '../../../../../core/domain/product/ProductId';
-import { ProductsRepository } from '../../../../../core/domain/product/ProductsRepository';
+import { Product } from '../../../../../core/domain/Product/Product';
+import { ProductFactory } from '../../../../../core/domain/Product/ProductFactory';
+import { ProductId } from '../../../../../core/domain/Product/ProductId';
+import { ProductsRepository } from '../../../../../core/domain/Product/ProductsRepository';
 import { UniqueEntityID } from '../../../../../shared/core/UniqueEntityID';
 import { InMemoryProductsRepository } from '../InMemoryProductsRepository';
 

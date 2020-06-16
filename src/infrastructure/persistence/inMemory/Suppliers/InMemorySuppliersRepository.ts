@@ -1,6 +1,6 @@
-import { Supplier } from '../../../../core/domain/supplier/Supplier';
-import { SupplierId } from '../../../../core/domain/supplier/SupplierId';
-import { SuppliersRepository } from '../../../../core/domain/supplier/SuppliersRepository';
+import { Supplier } from '../../../../core/domain/Supplier/Supplier';
+import { SupplierId } from '../../../../core/domain/Supplier/SupplierId';
+import { SuppliersRepository } from '../../../../core/domain/Supplier/SuppliersRepository';
 
 export class InMemorySuppliersRepository implements SuppliersRepository {
   private suppliers: Supplier[] = [];

@@ -1,6 +1,6 @@
-import { Sale } from '../../../../core/domain/sale/Sale';
-import { SaleId } from '../../../../core/domain/sale/SaleId';
-import { SalesRepository } from '../../../../core/domain/sale/SalesRepository';
+import { Sale } from '../../../../core/domain/Sale/Sale';
+import { SaleId } from '../../../../core/domain/Sale/SaleId';
+import { SalesRepository } from '../../../../core/domain/Sale/SalesRepository';
 
 export class InMemorySalesRepository implements SalesRepository {
   private sales: Sale[] = [];

@@ -1,7 +1,7 @@
-import { Invoice } from '../../../../core/domain/invoice/Invoice';
-import { InvoiceId } from '../../../../core/domain/invoice/InvoiceId';
-import { InvoiceNumber } from '../../../../core/domain/invoice/InvoiceNumber';
-import { InvoicesRepository } from '../../../../core/domain/invoice/InvoicesRepository';
+import { Invoice } from '../../../../core/domain/Invoice/Invoice';
+import { InvoiceId } from '../../../../core/domain/Invoice/InvoiceId';
+import { InvoiceNumber } from '../../../../core/domain/Invoice/InvoiceNumber';
+import { InvoicesRepository } from '../../../../core/domain/Invoice/InvoicesRepository';
 
 export class InMemoryInvoicesRepository implements InvoicesRepository {
   private invoices: Invoice[] = [];
