@@ -1,4 +1,4 @@
-import { UseCase } from '../../../shared/application/UseCase';
+import { UseCase } from '../../../shared/application/models/UseCase';
 import { UniqueEntityID } from '../../../shared/core/UniqueEntityID';
 import { Client } from '../../domain/client/Client';
 import { ClientId } from '../../domain/client/ClientId';

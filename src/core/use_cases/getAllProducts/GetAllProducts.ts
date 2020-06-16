@@ -1,4 +1,4 @@
-import { UseCase } from '../../../shared/application/UseCase';
+import { UseCase } from '../../../shared/application/models/UseCase';
 import { ProductList, ProductsRepository } from '../../domain/product/ProductsRepository';
 import { GetAllProductsRequestDTO } from './GetAllProductsRequestDTO';
 

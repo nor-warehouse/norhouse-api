@@ -1,5 +1,5 @@
 import * as express from 'express';
-import { purchaseRouter } from './infrastructure/http/api/routes';
+import { purchaseRouter } from './delivery/http/api/routes';
 
 const app = express();
 const port = 8080;

@@ -1,4 +1,4 @@
-import { UseCase } from '../../../shared/application/UseCase';
+import { UseCase } from '../../../shared/application/models/UseCase';
 import { UniqueEntityID } from '../../../shared/core/UniqueEntityID';
 import { Invoice } from '../../domain/invoice/Invoice';
 import { InvoiceFactory } from '../../domain/invoice/InvoiceFactory';

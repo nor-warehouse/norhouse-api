@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { BaseController } from '../../../../../../shared/infrastructure/BaseController';
+import { BaseController } from '../../../../../../shared/delivery/http/api/models/BaseController';
 import { PurchaseDTO } from '../../../../../../core/domain/purchase/PurchaseDTO';
 import { PurchaseMapper } from '../../../../../../core/domain/purchase/PurchaseMapper';
 import { RegisterPurchaseRequestDTO } from '../../../../../../core/use_cases/registerPurchase/RegisterPurchaseRequestDTO';
