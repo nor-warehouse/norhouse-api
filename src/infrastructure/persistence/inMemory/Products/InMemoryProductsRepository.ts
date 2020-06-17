@@ -1,22 +1,20 @@
 import { Product } from '../../../../core/domain/Product/Product';
 import { ProductId } from '../../../../core/domain/Product/ProductId';
-import { ProductList, ProductsRepository } from '../../../../core/domain/Product/ProductsRepository';
-import { Pagination } from '../../../../core/domain/shared/Pagination';
+import { ProductsRepository } from '../../../../core/domain/Product/ProductsRepository';
+import {
+  PaginationRequest,
+  PaginationResult,
+  PaginationService,
+} from '../../../../shared/application/services/PaginationService';
 
 export class InMemoryProductsRepository implements ProductsRepository {
   private products: Product[] = [];
 
-  findAll(pagination?: Pagination): Promise<ProductList> {
-    let products = this.products;
-    if (pagination) {
-      const { limit = 10, page = 1 } = pagination;
-      const index = (page - 1) * limit;
-      products = this.products.slice(index, page * limit);
-    }
-    return Promise.resolve({
-      products,
-      count: this.products.length,
-    });
+  constructor(private paginationService: PaginationService) {}
+
+  findAll(pagination?: PaginationRequest): Promise<PaginationResult<Product>> {
+    const paginationResult = this.paginationService.paginate(this.products, pagination);
+    return Promise.resolve(paginationResult);
   }
 
   findById(id: ProductId): Promise<Product | undefined> {

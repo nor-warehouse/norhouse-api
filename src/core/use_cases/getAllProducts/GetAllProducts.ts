@@ -1,12 +1,17 @@
 import { UseCase } from '../../../shared/application/models/UseCase';
-import { ProductList, ProductsRepository } from '../../domain/Product/ProductsRepository';
-import { GetAllProductsRequestDTO } from './GetAllProductsRequestDTO';
+import {
+  PaginationRequest,
+  PaginationResult,
+} from '../../../shared/application/services/PaginationService/PaginationService';
+import { Product } from '../../domain/Product/Product';
+import { ProductsRepository } from '../../domain/Product/ProductsRepository';
 
-export class GetAllProducts implements UseCase<GetAllProductsRequestDTO, ProductList> {
+type ProductList = PaginationResult<Product>;
+
+export class GetAllProducts implements UseCase<PaginationRequest, ProductList> {
   constructor(private productsRepo: ProductsRepository) {}
 
-  async execute(request: GetAllProductsRequestDTO): Promise<ProductList> {
-    const productsList = await this.productsRepo.findAll({ limit: request.limit, page: request.page });
-    return productsList;
+  async execute(request: PaginationRequest): Promise<ProductList> {
+    return await this.productsRepo.findAll({ limit: request.limit, page: request.page });
   }
 }

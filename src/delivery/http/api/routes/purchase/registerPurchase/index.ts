@@ -5,12 +5,13 @@ import { InMemoryInvoicesRepository } from '../../../../../../infrastructure/per
 import { InMemoryProductsRepository } from '../../../../../../infrastructure/persistence/inMemory/Products/InMemoryProductsRepository';
 import { InMemoryPurchasesRepository } from '../../../../../../infrastructure/persistence/inMemory/Purchases/InMemoryPurchasesRepository';
 import { InMemorySuppliersRepository } from '../../../../../../infrastructure/persistence/inMemory/Suppliers/InMemorySuppliersRepository';
+import { PaginationService } from '../../../../../../shared/application/services/PaginationService';
 import { RegisterPurchaseController } from './RegisterPurchaseController';
 
 const invoicesRepo = new InMemoryInvoicesRepository();
 const suppliersRepo = new InMemorySuppliersRepository();
 const categoriesRepo = new InMemoryCategoriesRepository();
-const productsRepo = new InMemoryProductsRepository();
+const productsRepo = new InMemoryProductsRepository(new PaginationService());
 const purchasesRepo = new InMemoryPurchasesRepository();
 
 const registerPurchase = new RegisterPurchase(invoicesRepo, suppliersRepo, categoriesRepo, productsRepo, purchasesRepo);
