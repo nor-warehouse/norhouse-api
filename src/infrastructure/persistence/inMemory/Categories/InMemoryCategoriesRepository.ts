@@ -1,6 +1,6 @@
-import { CategoriesRepository } from '../../../../core/domain/Product/category/CategoriesRepository';
-import { Category } from '../../../../core/domain/Product/category/Category';
-import { CategoryId } from '../../../../core/domain/Product/category/CategoryId';
+import { CategoriesRepository } from '../../../../core/domain/Product/Category/CategoriesRepository';
+import { Category } from '../../../../core/domain/Product/Category/Category';
+import { CategoryId } from '../../../../core/domain/Product/Category/CategoryId';
 
 export class InMemoryCategoriesRepository implements CategoriesRepository {
   private categories: Category[] = [];

@@ -1,7 +1,7 @@
 import { Factory } from '../../../shared/core/Factory';
 import { UniqueEntityID } from '../../../shared/core/UniqueEntityID';
-import { Category } from './category/Category';
-import { CategoryName } from './category/CategoryName';
+import { Category } from './Category/Category';
+import { CategoryName } from './Category/CategoryName';
 import { Product } from './Product';
 import { ProductName } from './ProductName';
 import { ProductPrice } from './ProductPrice';
