@@ -4,6 +4,7 @@ import { InMemoryInvoicesRepository } from '../../../../infrastructure/persisten
 import { InMemoryProductsRepository } from '../../../../infrastructure/persistence/inMemory/Products/InMemoryProductsRepository';
 import { InMemoryPurchasesRepository } from '../../../../infrastructure/persistence/inMemory/Purchases/InMemoryPurchasesRepository';
 import { InMemorySuppliersRepository } from '../../../../infrastructure/persistence/inMemory/Suppliers/InMemorySuppliersRepository';
+import { PaginationService } from '../../../../shared/application/services/PaginationService';
 import { UniqueEntityID } from '../../../../shared/core/UniqueEntityID';
 import { Invoice } from '../../../domain/Invoice/Invoice';
 import { InvoiceNumber } from '../../../domain/Invoice/InvoiceNumber';
@@ -32,10 +33,11 @@ import { RegisterPurchaseRequestDTO } from '../RegisterPurchaseRequestDTO';
 let request: RegisterPurchaseRequestDTO;
 let purchase: Purchase;
 
+const paginationService = new PaginationService();
 const invoicesRepo: InvoicesRepository = new InMemoryInvoicesRepository();
 let suppliersRepo: SuppliersRepository = new InMemorySuppliersRepository();
 let categoriesRepo: CategoriesRepository = new InMemoryCategoriesRepository();
-let productsRepo: ProductsRepository = new InMemoryProductsRepository();
+let productsRepo: ProductsRepository = new InMemoryProductsRepository(paginationService);
 let purchasesRepo: PurchasesRepository = new InMemoryPurchasesRepository();
 
 let registerPurchase = new RegisterPurchase(invoicesRepo, suppliersRepo, categoriesRepo, productsRepo, purchasesRepo);
@@ -270,7 +272,7 @@ function cleanUp(): void {
   purchase = undefined;
   suppliersRepo = new InMemorySuppliersRepository();
   categoriesRepo = new InMemoryCategoriesRepository();
-  productsRepo = new InMemoryProductsRepository();
+  productsRepo = new InMemoryProductsRepository(paginationService);
   purchasesRepo = new InMemoryPurchasesRepository();
   registerPurchase = new RegisterPurchase(invoicesRepo, suppliersRepo, categoriesRepo, productsRepo, purchasesRepo);
 }
