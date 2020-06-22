@@ -4,7 +4,7 @@ import { InMemoryInvoicesRepository } from '../../../../infrastructure/persisten
 import { InMemoryProductsRepository } from '../../../../infrastructure/persistence/inMemory/Products/InMemoryProductsRepository';
 import { InMemoryPurchasesRepository } from '../../../../infrastructure/persistence/inMemory/Purchases/InMemoryPurchasesRepository';
 import { InMemorySuppliersRepository } from '../../../../infrastructure/persistence/inMemory/Suppliers/InMemorySuppliersRepository';
-import { PaginationService } from '../../../../shared/application/services/PaginationService';
+import { PaginationService } from '../../../../shared/infrastructure/services/PaginationService';
 import { UniqueEntityID } from '../../../../shared/core/UniqueEntityID';
 import { Invoice } from '../../../domain/Invoice/Invoice';
 import { InvoiceNumber } from '../../../domain/Invoice/InvoiceNumber';

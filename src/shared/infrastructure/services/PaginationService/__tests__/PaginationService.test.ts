@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { PaginationRequest, PaginationResult, PaginationService } from '../';
+import { PaginationRequest, PaginationResult, PaginationService } from '..';
 
 const paginationService = new PaginationService();
 let result: PaginationResult;

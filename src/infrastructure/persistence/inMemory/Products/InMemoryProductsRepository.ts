@@ -5,7 +5,7 @@ import {
   PaginationRequest,
   PaginationResult,
   PaginationService,
-} from '../../../../shared/application/services/PaginationService';
+} from '../../../../shared/infrastructure/services/PaginationService';
 
 export class InMemoryProductsRepository implements ProductsRepository {
   private products: Product[] = [];

@@ -17,14 +17,11 @@ export class PaginationService {
   };
 
   public paginate<T = unknown>(entries: T[], options: PaginationRequest = this.DEFAULT_OPTIONS): PaginationResult<T> {
-    const { limit = this.DEFAULT_LIMIT, page = this.DEFAULT_PAGE } = options;
-    const pageNum = Math.max(1, page);
-    const minLimit = Math.max(0, limit);
-    const index = (pageNum - 1) * minLimit;
-    const result = entries.slice(index, pageNum * minLimit);
+    const { limit, page } = options;
+    const index = (options.page - 1) * options.limit;
     return {
       count: entries.length,
-      entries: result,
+      entries: entries.slice(index, page * limit),
     };
   }
 }

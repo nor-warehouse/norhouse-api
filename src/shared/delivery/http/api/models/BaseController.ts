@@ -20,6 +20,7 @@ export abstract class BaseController {
   public ok<T>(res: Response, dto?: T, status = 200): Response {
     if (!!dto) {
       res.type('application/json');
+      console.log(dto);
       return res.status(status).json(dto);
     } else {
       return res.sendStatus(status);

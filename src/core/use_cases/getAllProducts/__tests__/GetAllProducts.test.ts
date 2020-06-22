@@ -1,5 +1,5 @@
 import { InMemoryProductsRepository } from '../../../../infrastructure/persistence/inMemory/Products/InMemoryProductsRepository';
-import { PaginationService } from '../../../../shared/application/services/PaginationService';
+import { PaginationService } from '../../../../shared/infrastructure/services/PaginationService';
 import { GetAllProducts } from '../GetAllProducts';
 
 test('Given GetAllProducts use case, when executed with GetAllProductsRequestDTO, then should return a PaginationResult', async () => {

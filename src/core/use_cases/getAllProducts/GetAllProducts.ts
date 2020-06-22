@@ -2,7 +2,7 @@ import { UseCase } from '../../../shared/application/models/UseCase';
 import {
   PaginationRequest,
   PaginationResult,
-} from '../../../shared/application/services/PaginationService/PaginationService';
+} from '../../../shared/infrastructure/services/PaginationService/PaginationService';
 import { Product } from '../../domain/Product/Product';
 import { ProductsRepository } from '../../domain/Product/ProductsRepository';
 

@@ -21,6 +21,7 @@ interface RawProduct {
 export class ProductFactory implements Factory<Product, RawProduct> {
   create(raw: RawProduct): Product {
     const idOrNot = raw.id ? new UniqueEntityID(raw.id) : undefined;
+    // FIXME el raw.category.id deberia venir, si es falsy tirar error
     const categoryIdOrNot = raw.category.id ? new UniqueEntityID(raw.category.id) : undefined;
     return Product.create(
       {

@@ -1,7 +1,7 @@
 import {
   PaginationRequest,
   PaginationResult,
-} from '../../../shared/application/services/PaginationService/PaginationService';
+} from '../../../shared/infrastructure/services/PaginationService/PaginationService';
 import { Product } from './Product';
 import { ProductId } from './ProductId';
 

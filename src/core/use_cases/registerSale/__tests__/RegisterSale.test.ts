@@ -2,7 +2,7 @@ import { InMemoryClientsRepository } from '../../../../infrastructure/persistenc
 import { InMemoryInvoicesRepository } from '../../../../infrastructure/persistence/inMemory/Invoices/InMemoryInvoicesRepository';
 import { InMemoryProductsRepository } from '../../../../infrastructure/persistence/inMemory/Products/InMemoryProductsRepository';
 import { InMemorySalesRepository } from '../../../../infrastructure/persistence/inMemory/Sales/InMemorySalesRepository';
-import { PaginationService } from '../../../../shared/application/services/PaginationService';
+import { PaginationService } from '../../../../shared/infrastructure/services/PaginationService';
 import { UniqueEntityID } from '../../../../shared/core/UniqueEntityID';
 import { Client } from '../../../domain/Client/Client';
 import { ClientName } from '../../../domain/Client/ClientName';

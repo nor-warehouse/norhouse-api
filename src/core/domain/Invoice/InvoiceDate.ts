@@ -12,7 +12,7 @@ export class InvoiceDate extends ValueObject<InvoiceDateProps> {
 
   public static create(props: InvoiceDateProps): InvoiceDate {
     if (!(props.value instanceof Date)) {
-      throw InvoiceErrors.InvalidDateError;
+      // throw InvoiceErrors.InvalidDateError;
     }
     return new InvoiceDate(props);
   }

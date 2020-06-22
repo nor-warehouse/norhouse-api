@@ -3,7 +3,7 @@ import { Product } from '../../../../../core/domain/Product/Product';
 import { ProductFactory } from '../../../../../core/domain/Product/ProductFactory';
 import { ProductId } from '../../../../../core/domain/Product/ProductId';
 import { ProductsRepository } from '../../../../../core/domain/Product/ProductsRepository';
-import { PaginationService } from '../../../../../shared/application/services/PaginationService';
+import { PaginationService } from '../../../../../shared/infrastructure/services/PaginationService';
 import { UniqueEntityID } from '../../../../../shared/core/UniqueEntityID';
 import { InMemoryProductsRepository } from '../InMemoryProductsRepository';
 
