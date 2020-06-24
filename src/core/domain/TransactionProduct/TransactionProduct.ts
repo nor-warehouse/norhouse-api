@@ -1,9 +1,9 @@
 import { Entity } from '../../../shared/core/Entity';
 import { UniqueEntityID } from '../../../shared/core/UniqueEntityID';
 import { Category } from '../Product/Category/Category';
-import { ProductId } from '../product/ProductId';
-import { ProductName } from '../product/ProductName';
-import { ProductPrice } from '../product/ProductPrice';
+import { ProductId } from '../Product/ProductId';
+import { ProductName } from '../Product/ProductName';
+import { ProductPrice } from '../Product/ProductPrice';
 import { TransactionProductQuantity } from './TransactionProductQuantity';
 
 interface TransactionProductProps {
