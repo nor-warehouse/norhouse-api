@@ -1,7 +1,7 @@
 import { Entity } from '../../../shared/core/Entity';
 import { UniqueEntityID } from '../../../shared/core/UniqueEntityID';
-import { Invoice } from '../invoice/Invoice';
-import { Supplier } from '../supplier/Supplier';
+import { Invoice } from '../Invoice/Invoice';
+import { Supplier } from '../Supplier/Supplier';
 import { TransactionProduct } from '../TransactionProduct/TransactionProduct';
 import { PurchaseId } from './PurchaseId';
 import { PurchaseTotal } from './PurchaseTotal';
