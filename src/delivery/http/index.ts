@@ -1,3 +1,8 @@
 import runAPI from './api';
 
-runAPI(8080);
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = '8080';
+}
+
+runAPI(process.env.PORT);
